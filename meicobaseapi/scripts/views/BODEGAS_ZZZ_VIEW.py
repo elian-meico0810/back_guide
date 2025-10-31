@@ -1,3 +1,4 @@
+import os
 from meicobaseapi.core.db.db_config import get_db_connection
 
 class BODEGAS_ZZZ_VIEW:
@@ -5,7 +6,7 @@ class BODEGAS_ZZZ_VIEW:
         print("Seeding BODEGAS_ZZZ_VIEW...")
 
         try:
-            conn = get_db_connection()
+            conn = get_db_connection(os.getenv("DBNAME_MEISEL_PPAL"))
             cursor = conn.cursor()
 
             # Eliminar vista si existe

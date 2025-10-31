@@ -63,8 +63,8 @@ INSTALLED_APPS = [
     "meicobaseapi",
     "rest_framework",
     "drf_yasg",
-    'corsheaders',
-    'meicobaseapi.core'
+    "corsheaders",
+    "meicobaseapi.core"
 ]
 
 MIDDLEWARE = [

@@ -1,14 +1,16 @@
 import os
 import pyodbc
 
-def get_db_connection():
+def get_db_connection(db_name=None):
     try:
+        if not db_name:
+            raise Exception("Debe especificar el nombre de la base de datos para la conexión.")
         """
             Devuelve una conexión a SQL Server usando variables de entorno.
             Se puede usar desde cualquier módulo del proyecto.
         """
         server = os.getenv("DBHOST")
-        database = os.getenv("DBNAME_MEISEL_PPAL")
+        database = db_name
         username = os.getenv("DBUSER")
         password = os.getenv("DBPASSWORD")
 
