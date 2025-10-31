@@ -8,34 +8,34 @@ class UsuariosService:
         try:
             return self.repo.get_all()
         except Exception as e:
-            return None
+            return e
     
     def get_user_by_email(self, email):
         try:
             return self.repo.get_by_email(email)
         except Exception as e:
-            return None
+            return e
 
     def create_user(self, data):
         try:
             return self.repo.create(data)
         except Exception as e:
-            return None
+            return e
 
-    def update_user(self, usuario, nuevo_estado, auth_user):
+    def update_user(self, usuario, auth_user, data):
         try:
-            return self.repo.update(usuario, nuevo_estado, auth_user)
+            return self.repo.update(usuario.id, auth_user, data)
         except Exception as e:
-            return None
+            return e
 
     def delete_user(self, user_id):
         try:
             return self.repo.delete(user_id)
         except Exception as e:
-            return None
+            return e
     
     def get_user_by_id(self, user_id):
         try:
             return self.repo.get_by_id(user_id)
         except Exception as e:
-            return None
+            raise e

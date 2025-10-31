@@ -4,30 +4,64 @@ from django.db import transaction
 from django.utils import timezone
 
 class UsuariosRepository:
+    
+    
     def get_all(self):
-        return Usuarios.objects.all()
+        try:
+            return Usuarios.objects.filter(estado=True)
+        except Exception as e:
+            raise e
+    
     
     def get_by_email(self, email):
-        return Usuarios.objects.get(correo=email)
-
+        try:
+            return Usuarios.objects.get(correo=email)
+        except Exception as e:
+            raise e
+        
+    
     def create(self, data):
-        return Usuarios.objects.create(**data)
-
-    def update(self, usuario, nuevo_estado, auth_user):
-        with transaction.atomic():
-            if nuevo_estado is not None:
-                usuario.estado = nuevo_estado
+        try:
+            return Usuarios.objects.create(**data)
+        except Exception as e:
+            raise e
+        
+    
+    def update(self, id, auth_user, data):
+        try:
+            with transaction.atomic():
+                usuario = Usuarios.objects.get(id=id)
+                usuario.nombre = data.get("nombre", usuario.nombre)
+                usuario.correo = data.get("correo", usuario.correo)
+                usuario.ciudad = data.get("ciudad", usuario.ciudad)
                 usuario.updated_by = auth_user
                 usuario.updated_at = timezone.now()
                 usuario.save()
+            return usuario
+        except Exception as e:
+            raise e
 
-        return usuario
 
-    def delete(self, user_id):
-        user = Usuarios.objects.get(id=user_id)
-        user.delete()
+    def delete(self, user_id, auth_user=None):
+        try:
+            with transaction.atomic():
+
+                usuario = Usuarios.objects.get(id=user_id)
+                usuario.estado = False
+                usuario.deleted_by = auth_user
+                usuario.deleted_at = timezone.now()
+                usuario.save()
+            return True
+        except Exception as e:
+            raise e
 
     
+
     def get_by_id(self, user_id):
-        return Usuarios.objects.get(id=user_id)
+        try:
+            data = Usuarios.objects.filter(id=user_id, estado=True).first()
+            if not data: raise Exception("Usuario no encontrado")
+            return data
+        except Exception as e:
+            raise e
 
