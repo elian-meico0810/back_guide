@@ -93,8 +93,6 @@ WSGI_APPLICATION = "meicobaseapi.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-print("Configurando la base de datos con los siguientes parámetros:")
-
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
@@ -109,11 +107,6 @@ DATABASES = {
             #'Trusted_Connection': 'yes',
         },
     }
-}
-
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
 }
 
 #MIGRATION_MODULES = {"auth": None, "contenttypes": None}

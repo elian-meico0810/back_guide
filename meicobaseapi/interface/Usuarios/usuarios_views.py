@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
 from meicobaseapi.core.helpers.utils import formatErrors
-from meicobaseapi.core.pagination.custom_pagination import BasicPagination
+from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
 from .usuarios_serializers import UsersariosUpdatedSerializer, UsuariosSerializer, UsuariosListSerializer
 from meicobaseapi.domain.Usuarios.usuarios_services import UsuariosService
 from meicobaseapi.core.APIResponse import APIResponse
@@ -11,15 +11,14 @@ from meicobaseapi.core.authentication import AllowAnonymous
 from meicobaseapi.core.jwt_auth import JWTAuthentication
 
 
-class UsuariosViewSet(viewsets.ViewSet):
-    #Obtenemos el serivico de usuarios
+class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     service = UsuariosService()
     # Definimos el serializador primcipal
     serializer_class = UsuariosSerializer
     # Definimos el serializador para listas primicipal
     list_serializer_class = UsuariosListSerializer
     # Aplicamos la paginacion
-    pagination_class = BasicPagination
+    pagination_class = ResultsSetPagination
 
 
     @swagger_auto_schema(tags=["users"])
@@ -27,18 +26,20 @@ class UsuariosViewSet(viewsets.ViewSet):
     @permission_classes([AllowAnonymous])
     def obtener_usuarios(self, request):
         try:
+            # Obtenemos el queryset desde el servicio
             users = self.service.get_all_users()
-            page = request.query_params.get("page", None)
-            # Inicializamos variables
-            data = None
 
             paginator = self.pagination_class()
-            page = paginator.paginate_queryset(users, request)
-            
-            if page:
-                serializer = self.list_serializer_class(page, many=True)
+
+            page = request.query_params.get("page", None)
+
+            if page is not None:
+                # Aplica paginación
+                paginated_users = paginator.paginate_queryset(users, request)
+                serializer = self.list_serializer_class(paginated_users, many=True)
                 data = paginator.get_paginated_response(serializer.data).data
             else:
+                # Devuelve todos los resultados sin paginar
                 serializer = self.list_serializer_class(users, many=True)
                 data = serializer.data
 
@@ -46,9 +47,9 @@ class UsuariosViewSet(viewsets.ViewSet):
                 message="Operación exitosa",
                 data=data
             )
+
         except Exception as e:
             return APIResponse.failed(e)
-
 
     @swagger_auto_schema(tags=["users"])
     @action(detail=False, methods=["POST"], url_path="crear", name="Crear un usuario")
