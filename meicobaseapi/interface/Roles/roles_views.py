@@ -4,30 +4,30 @@ from rest_framework.decorators import action, permission_classes, authentication
 from rest_framework.decorators import permission_classes
 from meicobaseapi.core.helpers.utils import formatErrors
 from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
-from .usuarios_serializers import UsersariosUpdatedSerializer, UsuariosSerializer, UsuariosListSerializer
-from meicobaseapi.domain.Usuarios.usuarios_services import UsuariosService
+from meicobaseapi.domain.Roles.roles_services import RolesService
 from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
 from meicobaseapi.core.jwt_auth import JWTAuthentication
+from meicobaseapi.interface.Roles.roles_serializers import RolesSerializer, UsuariosListSerializer, RolesUpdatedSerializer
 
 
-class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
-    service = UsuariosService()
+class RolesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
+    service = RolesService()
     # Definimos el serializador primcipal
-    serializer_class = UsuariosSerializer
+    serializer_class = RolesSerializer
     # Definimos el serializador para listas primicipal
     list_serializer_class = UsuariosListSerializer
     # Aplicamos la paginacion
     pagination_class = ResultsSetPagination
 
 
-    @swagger_auto_schema(tags=["users"])
-    @action(detail=False, methods=["GET"], url_path="obtener", name="Obtener Usuarios")
+    @swagger_auto_schema(tags=["groups"])
+    @action(detail=False, methods=["GET"], url_path="obtener", name="Obtener rooles")
     @permission_classes([AllowAnonymous])
-    def obtener_usuarios(self, request):
+    def obtener_roles(self, request):
         try:
             # Obtenemos el queryset desde el servicio
-            users = self.service.get_all_users()
+            users = self.service.get_all_roles()
 
             paginator = self.pagination_class()
 
@@ -51,14 +51,15 @@ class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
         except Exception as e:
             return APIResponse.failed(e)
 
-    @swagger_auto_schema(tags=["users"])
-    @action(detail=False, methods=["POST"], url_path="crear", name="Crear un usuario")
+
+    @swagger_auto_schema(tags=["groups"])
+    @action(detail=False, methods=["POST"], url_path="crear", name="Crear un rol")
     @permission_classes([AllowAnonymous])
-    def crear_usuario(self, request):
+    def crear_rol(self, request):
         try:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                self.service.create_user(request.data)
+                self.service.create_role(request.data)
             else:
                 return APIResponse.failed(error=formatErrors(serializer.errors))
              
@@ -67,22 +68,22 @@ class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.failed(e)
 
 
-    @swagger_auto_schema(tags=["users"])
-    @action(detail=False, methods=["PUT"], url_path="actualizar", name="Modificar un usuario")
-    def actualizar_usuario(self, request):
+    @swagger_auto_schema(tags=["groups"])
+    @action(detail=False, methods=["PUT"], url_path="actualizar", name="Modificar un rol")
+    def actualizar_rol(self, request):
         try:
             id = request.query_params.get("id", None)
             if not id:
-                return APIResponse.error(message="El ID de usuario es requerido.", data={})
+                return APIResponse.error(message="El ID del rol es requerido.", data={})
             
             user_data = request.user
             data = None
-            auth_user = self.service.get_user_by_id(id)
-            serializer = UsersariosUpdatedSerializer(data=request.data)
+            auth_user = self.service.get_role_by_id(id)
+            serializer = RolesUpdatedSerializer(data=request.data)
             if serializer.is_valid():
-                usuario = self.service.get_user_by_email(auth_user.correo)
-                usuario_actualizado = self.service.update_user(usuario, auth_user, request.data)
-                data = UsersariosUpdatedSerializer(usuario_actualizado).data
+                usuario = self.service.get_role_by_name(auth_user.nombre)
+                usuario_actualizado = self.service.update_role(usuario, auth_user, request.data)
+                data = RolesUpdatedSerializer(usuario_actualizado).data
             else:
                 return APIResponse.failed(error=formatErrors(serializer.errors))
     
@@ -94,19 +95,19 @@ class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.failed(e)
     
 
-    @swagger_auto_schema(tags=["users"])
-    @action(detail=False, methods=["DELETE"], url_path="eliminar", name="Eliminar un usuario")
-    def eliminar_usuario(self, request):
+    @swagger_auto_schema(tags=["groups"])
+    @action(detail=False, methods=["DELETE"], url_path="eliminar", name="Eliminar un rol")
+    def eliminar_rol(self, request):
         try:
             pk = request.query_params.get("id", None)
             if not pk:
-                return APIResponse.error(message="El ID de usuario es requerido.", data={})
+                return APIResponse.error(message="El ID del rol es requerido.", data={})
             
-            data = self.service.get_user_by_id(pk)
+            data = self.service.get_role_by_id(pk)
             if not data:
                 return APIResponse.error(message="Usuario no encontrado.", data={})
             
-            self.service.delete_user(pk)
+            self.service.delete_role(pk)
             
             return APIResponse.successful(message="Operación exitosa", data=[])
         except Exception as e:
@@ -114,17 +115,16 @@ class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
 
     
     @authentication_classes([JWTAuthentication])
-    @swagger_auto_schema(tags=["users"])
-    @action(detail=False, methods=["GET"], url_path="getUser", name="Obtener un usuario especifico")
-    def get_user_by_id(self, request):
+    @swagger_auto_schema(tags=["groups"])
+    @action(detail=False, methods=["GET"], url_path="getRolById", name="Obtener un rol especifico")
+    def get_rol_by_id(self, request):
         try:
-            user_id = request.query_params.get("user_id", None)
-            if not user_id:
-                return APIResponse.error(message="El ID de usuario es requerido.", data={})
+            rol_id = request.query_params.get("rol_id", None)
+            if not rol_id:
+                return APIResponse.error(message="El ID del rol es requerido.", data={})
             
-            users = self.service.get_user_by_id(user_id)
-            serializer = UsuariosSerializer(users)
+            data = self.service.get_role_by_id(rol_id)
+            serializer = RolesSerializer(data)
             return APIResponse.successful(message="Datos obentenidos con exito.", data=serializer.data)
         except Exception as e:
             return APIResponse.failed(e)
-
