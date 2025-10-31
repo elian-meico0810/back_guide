@@ -7,5 +7,5 @@ from .APIResponse import APIResponse
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     if isinstance(exc, AuthenticationFailed):
-        return APIResponse(401, None, "El token es invalido o ha expirado.")
+        return APIResponse.error(message="El token es invalido o ha expirado.", status=401)
     return response

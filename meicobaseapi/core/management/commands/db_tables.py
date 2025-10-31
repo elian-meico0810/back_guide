@@ -1,66 +1,103 @@
 import os
 import importlib
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import models
 
 
 class Command(BaseCommand):
-    """
-    Ejecuta:
-        python manage.py db_tables              → genera SQL para TODOS los modelos
-        python manage.py db_tables --class X Y  → genera SQL solo para esos modelos
-    """
-
-    help = "Genera scripts CREATE TABLE desde los modelos definidos en meicobaseapi.models"
+    help = "Genera scripts CREATE TABLE solo para los modelos definidos en meicobaseapi.models (sin ejecutar en la DB)."
 
     def add_arguments(self, parser):
-        parser.add_argument('--class', nargs='+', type=str, help="Nombre(s) de los modelos Django")
+        parser.add_argument('--class', nargs='+', type=str, help="Nombre(s) específicos de modelos a generar")
 
     def handle(self, *args, **options):
         try:
             print(" Generando script SQL desde meicobaseapi.models...")
 
-            # Importar el módulo que contiene todos los modelos
+            # Importamos el módulo de modelos principal
             models_module = importlib.import_module("meicobaseapi.models")
 
             # Crear carpeta de salida
             output_dir = os.path.join(os.getcwd(), "generated_sql")
             os.makedirs(output_dir, exist_ok=True)
 
-            # Si no se especifican modelos → procesar todos
-            model_names = options.get('class', None)
-            if not model_names:
-                model_names = [
-                    name for name, obj in models_module.__dict__.items()
-                    if isinstance(obj, type) and issubclass(obj, models.Model) and not obj._meta.abstract
-                ]
-                print(f" No se especificó modelo. Se generarán todos: {', '.join(model_names)}")
+            # Obtener solo los modelos definidos en ese archivo (no los del core de Django)
+            module_models = [
+                m for m in apps.get_models()
+                if m.__module__ == "meicobaseapi.models" and not m._meta.abstract
+            ]
 
-            # Procesar modelos uno por uno
-            for model_name in model_names:
-                if not hasattr(models_module, model_name):
-                    print(f" El modelo '{model_name}' no existe en meicobaseapi.models")
-                    continue
+            if not module_models:
+                print(" No se encontraron modelos definidos en meicobaseapi.models.")
+                return
 
-                model_class = getattr(models_module, model_name)
-                sql_script = self.generate_create_sql(model_class)
+            # Filtramos si se pasan nombres de clases
+            model_names = options.get("class", None)
+            if model_names:
+                models_to_process = [m for m in module_models if m.__name__ in model_names]
+            else:
+                models_to_process = module_models
 
-                output_path = os.path.join(output_dir, f"{model_name}.sql")
-                with open(output_path, "w", encoding="utf-8") as f:
-                    f.write(sql_script)
+            if not models_to_process:
+                print(" Ningún modelo coincide con los nombres indicados.")
+                return
 
-                print(f" Script generado correctamente: {output_path}")
+            print(f" Modelos detectados: {', '.join([m.__name__ for m in models_to_process])}")
+
+            # Ordenar modelos según dependencias de ForeignKey
+            models_to_process = self.sort_by_dependencies(models_to_process)
+
+            # Crear un único archivo SQL
+            output_path = os.path.join(output_dir, "create_all_tables.sql")
+            with open(output_path, "w", encoding="utf-8") as f:
+                for model_class in models_to_process:
+                    sql_script = self.generate_create_sql(model_class)
+                    f.write(sql_script + "\n\n")
+                    print(f" Script generado para: {model_class.__name__}")
+
+            print(f"\n Archivo final generado en: {output_path}")
 
         except Exception as e:
             print(f" Error generando script: {e}")
 
     # ============================================================
-    # FUNCIONES INTERNAS
+    # FUNCIONES AUXILIARES
     # ============================================================
+
+    def sort_by_dependencies(self, model_list):
+        try:
+            """Ordena modelos respetando dependencias de claves foráneas."""
+            dependency_graph = {m.__name__: set() for m in model_list}
+
+            for model in model_list:
+                for field in model._meta.get_fields():
+                    if isinstance(field, models.ForeignKey):
+                        ref_name = field.related_model.__name__
+                        if ref_name in dependency_graph:
+                            dependency_graph[model.__name__].add(ref_name)
+
+            sorted_models = []
+            while dependency_graph:
+                independents = [m for m, deps in dependency_graph.items() if not deps]
+                if not independents:
+                    independents = [list(dependency_graph.keys())[0]]  # rompe ciclos
+                sorted_models.extend(independents)
+                for indep in independents:
+                    dependency_graph.pop(indep, None)
+                for deps in dependency_graph.values():
+                    deps.difference_update(independents)
+
+            name_to_model = {m.__name__: m for m in model_list}
+            return [name_to_model[n] for n in sorted_models if n in name_to_model]
+        except Exception as e:
+            raise e
+        
+
 
     def generate_create_sql(self, model_class):
         try:
-            """Genera el script CREATE TABLE para un modelo Django"""
+            """Genera el SQL CREATE TABLE para un modelo Django."""
             table_name = model_class._meta.db_table
             sql_lines = [f"CREATE TABLE dbo.{table_name} ("]
             pk_fields = []
@@ -71,7 +108,6 @@ class Command(BaseCommand):
                     continue
 
                 col_name = field.column
-                # Detectar si es ForeignKey
                 if isinstance(field, models.ForeignKey):
                     ref_field = field.target_field
                     col_type = self.map_field_type(ref_field, is_foreign_key=True)
@@ -79,11 +115,10 @@ class Command(BaseCommand):
                     col_type = self.map_field_type(field)
 
                 null_sql = "NULL" if field.null else "NOT NULL"
+                sql_lines.append(f"    {col_name} {col_type} {null_sql},")
 
                 if field.primary_key:
                     pk_fields.append(col_name)
-
-                sql_lines.append(f"    {col_name} {col_type} {null_sql},")
 
                 if isinstance(field, models.ForeignKey):
                     ref_table = field.related_model._meta.db_table
@@ -101,14 +136,14 @@ class Command(BaseCommand):
 
             if fk_constraints:
                 sql_lines.append("\n".join(fk_constraints))
+
             return "\n".join(sql_lines)
         except Exception as e:
             raise e
         
 
     def map_field_type(self, field, is_foreign_key=False):
-        """Mapea tipos de Django a SQL Server"""
-        # No permitir IDENTITY en claves foráneas
+        """Convierte tipos de Django a tipos SQL Server."""
         if isinstance(field, models.AutoField):
             return "INT IDENTITY(1,1)" if not is_foreign_key else "INT"
         elif isinstance(field, models.BigAutoField):
@@ -132,4 +167,4 @@ class Command(BaseCommand):
         elif isinstance(field, models.DateField):
             return "DATE"
         else:
-            return "VARCHAR(255)"  # fallback
+            return "VARCHAR(255)"

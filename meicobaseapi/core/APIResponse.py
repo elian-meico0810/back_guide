@@ -55,7 +55,8 @@ class APIResponse():
    
     def error(message="",  data={},status=status.HTTP_400_BAD_REQUEST):
         return Response({
+            "statusCode": status,
             'success': False,
             'messages': [message],
             'data': data
-        }, status=status)
+        })
