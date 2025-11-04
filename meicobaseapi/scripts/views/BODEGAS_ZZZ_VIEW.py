@@ -29,7 +29,7 @@ class BODEGAS_ZZZ_VIEW:
             """)
             conn.commit()
 
-            print("✅ BODEGAS_ZZZ_VIEW -- Executed! Vista creada correctamente.")
+            print("BODEGAS_ZZZ_VIEW -- Executed! Vista creada correctamente.")
 
         except Exception as e:
             print(f"❌ Error al crear la vista: {e}")
