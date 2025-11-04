@@ -186,3 +186,33 @@ class Guias(Auditoria):
     class Meta:
         db_table = 'Guias'
         default_permissions=()
+        
+
+class GuiasAuditoria(Auditoria):
+    numero_guia = models.CharField(max_length=100, help_text="Número de la guía")
+    descripcion = models.TextField(null=True, blank=True, help_text="Descripción de la guía")
+    estado = models.BooleanField(default=True, help_text="Estado de la guía (activo/inactivo)")
+    fecha_creacion_guia = models.CharField(max_length=50, null=False, help_text="Fecha de creación de la guía")
+    fecha_despacho_guia = models.CharField(max_length=50, null=False, help_text="Fecha de despacho de la guía")
+    tipo_guia = models.CharField(max_length=100, help_text="Tipo de guía")
+    id_bodega = models.CharField(max_length=255, null=True, blank=True, help_text="Bodega asociada a la guía")
+    tipo_id_propietario_transporte = models.CharField(max_length=50, null=True, blank=True, help_text="Tipo de identificación del propietario del transporte")
+    id_propietario_transporte = models.CharField(max_length=50, null=True, blank=True, help_text="Identificación del propietario del transporte")
+    nombre_propietario_transporte = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario del transporte")
+    placa = models.CharField(max_length=20, null=True, blank=True, help_text="Placa del vehículo de transporte")
+    tipo_id_conductor = models.CharField(max_length=50, null=True, blank=True, help_text="Tipo de identificación del conductor")
+    nombre_conductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
+    estado_guia_original = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía")
+    estado_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía")
+    nombre_bodega = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre de la bodega asociada a la guía")
+    cantidad_facturas = models.IntegerField(null=True, blank=True, help_text="Cantidad de facturas en la guía")
+    fecha_promesa = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha promesa de entrega de la guía")
+    fecha_retorno = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de retorno de la guía")
+    valor_reacaudar = models.CharField(max_length=50, null=True, blank=True, help_text="Valor a recaudar en la guía")
+    id_usuario = models.IntegerField(null=True, blank=True, help_text="ID del usuario asociado a la guía")
+    nombre_usuario = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario asociado a la guía")
+    guia = models.ForeignKey(Guias, on_delete=models.CASCADE, help_text="Guía asociada a la auditoría")
+    
+    class Meta:
+        db_table = 'GuiasAuditoria'
+        default_permissions=()
