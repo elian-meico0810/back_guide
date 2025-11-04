@@ -8,14 +8,18 @@ class RolesRepository:
     
     def get_all(self):
         try:
-            return Roles.objects.filter(estado=True)
+            data = Roles.objects.filter(estado=True).first()
+            if not data: raise Exception("Rol no encontrado")
+            return data
         except Exception as e:
             raise e
     
     
     def get_by_name(self, name):
         try:
-            return Roles.objects.get(name=name)
+            data =  Roles.objects.filter(nombre=name, estado=True).first()
+            if not data: raise Exception("Rol no encontrado")
+            return data
         except Exception as e:
             raise e
         
@@ -33,7 +37,6 @@ class RolesRepository:
                 rol = Roles.objects.get(id=id)
                 rol.nombre = data.get("nombre", rol.nombre)
                 rol.descripcion = data.get("descripcion", rol.descripcion)
-                rol.updated_by = auth_user
                 rol.updated_at = timezone.now()
                 rol.save()
             return rol

@@ -33,7 +33,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
         
 
 
-class UsersariosUpdatedSerializer(serializers.ModelSerializer):    
+class UsuariosUpdatedSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Usuarios
         fields = ['nombre', 'correo', 'ciudad', 'estado']

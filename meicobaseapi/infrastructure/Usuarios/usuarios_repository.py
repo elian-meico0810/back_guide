@@ -8,14 +8,18 @@ class UsuariosRepository:
     
     def get_all(self):
         try:
-            return Usuarios.objects.filter(estado=True)
+            data = Usuarios.objects.filter(estado=True).first()
+            if not data: raise Exception("Usuario no encontrado")
+            return data
         except Exception as e:
             raise e
     
     
     def get_by_email(self, email):
         try:
-            return Usuarios.objects.get(correo=email)
+            data = Usuarios.objects.filter(correo=email, estado=True).first()
+            if not data: raise Exception("Usuario no encontrado")
+            return data
         except Exception as e:
             raise e
         

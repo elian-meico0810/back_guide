@@ -76,15 +76,17 @@ class RolesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             if not id:
                 return APIResponse.error(message="El ID del rol es requerido.", data={})
             
+            nombre = request.data.get("nombre", None)
             user_data = request.user
             data = None
             auth_user = self.service.get_role_by_id(id)
             serializer = RolesUpdatedSerializer(data=request.data)
             if serializer.is_valid():
-                usuario = self.service.get_role_by_name(auth_user.nombre)
+                usuario = self.service.get_role_by_name(nombre)
                 usuario_actualizado = self.service.update_role(usuario, auth_user, request.data)
                 data = RolesUpdatedSerializer(usuario_actualizado).data
             else:
+                print("serializer errors:", serializer.errors)
                 return APIResponse.failed(error=formatErrors(serializer.errors))
     
             return APIResponse.successful(

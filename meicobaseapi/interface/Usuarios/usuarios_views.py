@@ -4,7 +4,7 @@ from rest_framework.decorators import action, permission_classes, authentication
 from rest_framework.decorators import permission_classes
 from meicobaseapi.core.helpers.utils import formatErrors
 from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
-from .usuarios_serializers import UsersariosUpdatedSerializer, UsuariosSerializer, UsuariosListSerializer
+from .usuarios_serializers import UsuariosUpdatedSerializer, UsuariosSerializer, UsuariosListSerializer
 from meicobaseapi.domain.Usuarios.usuarios_services import UsuariosService
 from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
@@ -78,11 +78,11 @@ class UsuariosViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             user_data = request.user
             data = None
             auth_user = self.service.get_user_by_id(id)
-            serializer = UsersariosUpdatedSerializer(data=request.data)
+            serializer = UsuariosUpdatedSerializer(data=request.data)
             if serializer.is_valid():
                 usuario = self.service.get_user_by_email(auth_user.correo)
                 usuario_actualizado = self.service.update_user(usuario, auth_user, request.data)
-                data = UsersariosUpdatedSerializer(usuario_actualizado).data
+                data = UsuariosUpdatedSerializer(usuario_actualizado).data
             else:
                 return APIResponse.failed(error=formatErrors(serializer.errors))
     
