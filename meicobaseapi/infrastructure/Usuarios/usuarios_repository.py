@@ -9,7 +9,6 @@ class UsuariosRepository:
     def get_all(self):
         try:
             data = Usuarios.objects.filter(estado=True)
-            if not data: raise Exception("Usuario no encontrado")
             return data
         except Exception as e:
             raise e

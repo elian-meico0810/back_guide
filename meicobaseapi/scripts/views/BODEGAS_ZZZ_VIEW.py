@@ -32,7 +32,7 @@ class BODEGAS_ZZZ_VIEW:
             print("BODEGAS_ZZZ_VIEW -- Executed! Vista creada correctamente.")
 
         except Exception as e:
-            print(f"❌ Error al crear la vista: {e}")
+            print(f"Error al crear la vista: {e}")
 
         finally:
             try:

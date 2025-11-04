@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from meicobaseapi.scripts.views.BODEGAS_ZZZ_VIEW import BODEGAS_ZZZ_VIEW
+from meicobaseapi.scripts.views.INFO_GUIA_ZZZ_VIEW import INFO_GUIA_ZZZ_VIEW
 
 class Command(BaseCommand):
-    """Exec command $ python manage.py db_factoy --class <ClassName>"""
+    """Exec command $ python manage.py db_factory --class <ClassName>"""
     help='Corre los scripts en la base de datos'
 
     def add_arguments(self, parser):
@@ -19,6 +20,7 @@ class Command(BaseCommand):
                 pass
             else:
                 BODEGAS_ZZZ_VIEW()
+                INFO_GUIA_ZZZ_VIEW()
                 #seeder de parametros y atributos
             self.stdout.write("Executed Fatory ", ending='\n')
        except KeyError:
