@@ -230,7 +230,19 @@ class PlanillaDetalleFactura(Auditoria):
     valor_esperado_recaudar = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
     valor_recaudado = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
     diferencia = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
-
+    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    razon_social_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
+    drf_factura = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
+    numeros_nc  = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Numero de nota cerdito")
+    valor_nc = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
+    drf_real = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
+    estado = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
+    nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
+    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
+    
     class Meta:
         db_table = 'PlanillaDetalleFactura'
         default_permissions = ()
@@ -247,6 +259,18 @@ class PlanillaDetalleFacturaAuditoria(Auditoria):
     valor_recaudado = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
     diferencia = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
     planilla_detalle = models.ForeignKey(PlanillaDetalleFactura, on_delete=models.CASCADE, help_text="Referencia a la planilla detalles facuras original")
+    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    razon_social_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
+    drf_factura = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
+    numeros_nc  = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Numero de nota cerdito")
+    valor_nc = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
+    drf_real = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
+    estado = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
+    nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
+    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
     
     class Meta:
         db_table = 'PlanillaDetalleFacturaAuditoria'
@@ -254,6 +278,8 @@ class PlanillaDetalleFacturaAuditoria(Auditoria):
         
 
 class Documentos(Auditoria):
+    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
     valor_documento = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
@@ -271,6 +297,8 @@ class Documentos(Auditoria):
         
         
 class DocumentosAuditoria(Auditoria):
+    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
     valor_documento = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
