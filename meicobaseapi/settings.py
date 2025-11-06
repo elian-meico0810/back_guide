@@ -43,6 +43,10 @@ ACCESS_TOKEN_EXPIRATION = "1"
 REFRESH_TOKEN_EXPIRATION = "5"
 ALGORITHM_TOKEN = "HS256"
 
+# Crednciales y rutas GoAnyWhre 
+RUTA_INFO_GUIAS = env("RUTA_INFO_GUIAS")
+USER_GAW = env("USER_GAW")
+PASSWORD_GAW = env("PASSWORD_GAW")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

@@ -117,7 +117,8 @@ class Atributos(Auditoria):
 
         
 class PlanillaEncabezado(Auditoria):
-    planilla_enc_id = models.AutoField(primary_key=True, help_text="ID de la planilla")
+    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     fecha_creacion_planilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
     usuario_creacion_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
     total_esperado_recaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
@@ -125,6 +126,7 @@ class PlanillaEncabezado(Auditoria):
     total_diferencia = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total diferencia entre esperado y recaudado")
     cantidad_guias_despachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
     cantidad_guias_confirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaEncabezado'
@@ -132,7 +134,8 @@ class PlanillaEncabezado(Auditoria):
         
         
 class PlanillaEncabezadoAuditoria(Auditoria):
-    planilla_enc_id = models.AutoField(primary_key=True, help_text="ID de la planilla")
+    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     fecha_creacion_planilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
     usuario_creacion_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
     total_esperado_recaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
@@ -141,14 +144,16 @@ class PlanillaEncabezadoAuditoria(Auditoria):
     cantidad_guias_despachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
     cantidad_guias_confirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
     planilla_encabezado= models.ForeignKey(PlanillaEncabezado, on_delete=models.CASCADE, help_text="Referencia a la planilla encabezado original")
-    
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+
     class Meta:
         db_table = 'PlanillaEncabezadoAuditoria'
         default_permissions = ()
         
         
 class PlanillaDetalles(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
     fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
@@ -177,6 +182,7 @@ class PlanillaDetalles(Auditoria):
     fecha_ingreso_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de ingreso (datetime)")
     fecha_confirmacion_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
     fecha_confirmacion_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaDetalles'
@@ -185,6 +191,7 @@ class PlanillaDetalles(Auditoria):
 
 class PlanillaDetallesAuditoria(Auditoria):
     planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
     fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
@@ -214,7 +221,8 @@ class PlanillaDetallesAuditoria(Auditoria):
     fecha_confirmacion_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
     fecha_confirmacion_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
     planilla_detalle = models.ForeignKey(PlanillaDetalles, on_delete=models.CASCADE, help_text="Referencia a la planilla detalles original")
-    
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+ 
     class Meta:
         db_table = 'PlanillaDetalleAuditoria'
         default_permissions = ()
@@ -222,6 +230,7 @@ class PlanillaDetallesAuditoria(Auditoria):
         
 class PlanillaDetalleFactura(Auditoria):
     planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de guía asociado")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
@@ -236,13 +245,14 @@ class PlanillaDetalleFactura(Auditoria):
     numeros_nc  = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Numero de nota cerdito")
     valor_nc = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
     drf_real = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
-    estado = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    estado_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
     codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
     nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
     usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
     nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
     correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+
     class Meta:
         db_table = 'PlanillaDetalleFactura'
         default_permissions = ()
@@ -251,6 +261,7 @@ class PlanillaDetalleFactura(Auditoria):
 class PlanillaDetalleFacturaAuditoria(Auditoria):
     planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de guía asociado")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
     valor_factura = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor total de la factura")
@@ -258,20 +269,21 @@ class PlanillaDetalleFacturaAuditoria(Auditoria):
     valor_esperado_recaudar = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
     valor_recaudado = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
     diferencia = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
-    planilla_detalle = models.ForeignKey(PlanillaDetalleFactura, on_delete=models.CASCADE, help_text="Referencia a la planilla detalles facuras original")
     codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
     razon_social_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
     drf_factura = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
     numeros_nc  = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Numero de nota cerdito")
     valor_nc = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
     drf_real = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
-    estado = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    estado_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
     codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
     nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
     usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
     nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
     correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    planilla_detalle = models.ForeignKey(PlanillaDetalleFactura, on_delete=models.CASCADE, help_text="Referencia a la planilla detalles facuras original")
+
     class Meta:
         db_table = 'PlanillaDetalleFacturaAuditoria'
         default_permissions = ()
@@ -279,6 +291,7 @@ class PlanillaDetalleFacturaAuditoria(Auditoria):
 
 class Documentos(Auditoria):
     planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
@@ -290,6 +303,7 @@ class Documentos(Auditoria):
     codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
     nombre_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
     condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'Documentos'
@@ -298,6 +312,7 @@ class Documentos(Auditoria):
         
 class DocumentosAuditoria(Auditoria):
     planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
     numero_guia = models.IntegerField(null=True, blank=True, help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
     tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
@@ -310,6 +325,7 @@ class DocumentosAuditoria(Auditoria):
     nombre_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
     condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
     documento = models.ForeignKey(Documentos, on_delete=models.CASCADE, help_text="Referencia al documento original")
+    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
     
     class Meta:
         db_table = 'DocumentosAuditoria'

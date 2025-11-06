@@ -9,7 +9,6 @@ class RolesRepository:
     def get_all(self):
         try:
             data = Roles.objects.filter(estado=True)
-            if not data: raise Exception("Rol no encontrado")
             return data
         except Exception as e:
             raise e
