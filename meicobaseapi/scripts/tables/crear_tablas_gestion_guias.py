@@ -17,8 +17,17 @@ class crear_tablas_gestion_guias:
             IF OBJECT_ID('dbo.FactGuia', 'U') IS NOT NULL
                 DROP TABLE dbo.FactGuia;
 
-            IF OBJECT_ID('dbo.FacturasDetalladas', 'U') IS NOT NULL
-                DROP TABLE dbo.FacturasDetalladas;
+            IF OBJECT_ID('dbo.PlanillaDetalleFactura', 'U') IS NOT NULL
+                DROP TABLE dbo.PlanillaDetalleFactura;
+                
+            IF OBJECT_ID('dbo.Documentos', 'U') IS NOT NULL
+                DROP TABLE dbo.Documentos;
+                
+            IF OBJECT_ID('dbo.PlanillaEncabezado', 'U') IS NOT NULL
+                DROP TABLE dbo.PlanillaEncabezado;
+                
+            IF OBJECT_ID('dbo.PlanillaDetalles', 'U') IS NOT NULL
+                DROP TABLE dbo.PlanillaDetalles;
             """)
             conn.commit()
 
@@ -28,7 +37,7 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
             CREATE TABLE dbo.FactGuia (
                 idGoAnyWhere VARCHAR(50),
-                NumeroGuia INT,
+                NumeroGuia VARCHAR(255) NULL,
                 Transportador VARCHAR(50),
                 CodigoCliente VARCHAR(50),
                 NombreCliente VARCHAR(100),
@@ -52,41 +61,105 @@ class crear_tablas_gestion_guias:
             conn.commit()
 
             # =======================================================
-            # 3. Crear tabla FacturasDetalladas
+            # 2. Crear tabla PlanillaDetalleFactura
             # =======================================================
             cursor.execute("""
-            CREATE TABLE dbo.FacturasDetalladas (
-                idGoAnyWhere VARCHAR(50),
-                NumeroGuia INT,
-                Origen VARCHAR(50),
-                Transportador VARCHAR(50),
-                CodigoCliente VARCHAR(50),
-                NombreCliente VARCHAR(100),
-                Ciudad VARCHAR(50),
-                NumeroFactura INT,
-                CantidadNotasCredito VARCHAR(100),
-                FechaFactura VARCHAR(50),
-                Vendedor VARCHAR(10),
-                ValorOriginal DECIMAL(18,2),
-                DsctoFinanciero DECIMAL(18,2),
-                NuevoDsctoFinanciero DECIMAL(18,2),
-                CantidadNotaCredito INT,
-                ValorNotaCredito DECIMAL(18,2),
-                ListaNotasCredito VARCHAR(MAX),
-                TotalNotasCredito DECIMAL(18,2),
-                TieneNotaCredito BIT,
-                TipoFormaPago VARCHAR(50),
-                Bodega VARCHAR(50),
-                ValorConsignar DECIMAL(18,2),
-                ReporteBrinks DECIMAL(18,2),
-                DiferenciaValor DECIMAL(18,2),
-                FechaDespachoCompleta DATETIME,
-                Observaciones VARCHAR(MAX),
-                Cargue VARCHAR(50)
-            );
+                CREATE TABLE dbo.PlanillaDetalleFactura (
+                    PlanillaEncId INT,
+                    IdGoAnyWhere VARCHAR(255) NULL,
+                    NumeroGuia VARCHAR(255) NULL,
+                    NumeroDocumento VARCHAR(50) NULL,
+                    TipoDocumento VARCHAR(255) NULL,
+                    ValorFactura DECIMAL(15,4) NULL,
+                    ValorDevolucion DECIMAL(15,4) NULL,
+                    ValorEsperadoRecaudar DECIMAL(15,4) NULL,
+                    ValorRecaudado DECIMAL(15,4) NULL,
+                    Diferencia DECIMAL(15,4) NULL,
+                    CodigoCliente VARCHAR(50) NULL,
+                    RazonSocialCliente VARCHAR(255) NULL,
+                    DrfFactura DECIMAL(15,4) NULL,
+                    NumerosNc DECIMAL(15,4) NULL,
+                    ValorNc DECIMAL(15,4) NULL,
+                    DrfReal DECIMAL(15,4) NULL,
+                    Bodega VARCHAR(255) NULL,
+                    EstadoPlanilla VARCHAR(255) NULL,
+                    CodigoCondicionPago VARCHAR(255) NULL,
+                    NombreCondicionPago VARCHAR(255) NULL
+                );
             """)
             conn.commit()
 
+            # =======================================================
+            # 2. Crear tabla Documentos
+            # =======================================================
+            cursor.execute("""
+            CREATE TABLE dbo.Documentos (
+                PlanillaEncId INT NULL,
+                IdGoAnyWhere VARCHAR(255) NULL,
+                NumeroGuia VARCHAR(255) NULL,
+                NumeroDocumento VARCHAR(50) NULL,
+                TipoDocumento VARCHAR(255) NULL,
+                ValorDocumento DECIMAL(15,4) NULL,
+                FechaDocumento VARCHAR(50) NULL,
+                AplicaA VARCHAR(50) NULL,
+                BodegaId VARCHAR(50) NULL,
+                NombreBodega VARCHAR(255) NULL,
+                CodigoCliente VARCHAR(50) NULL,
+                NombreCliente VARCHAR(255) NULL,
+                CondicionPago VARCHAR(100) NULL,           
+            );
+
+            """)
+            conn.commit()
+            
+            # =======================================================
+            # 2. Crear tabla PlanillaEncabezado
+            # =======================================================
+            cursor.execute("""
+            CREATE TABLE dbo.PlanillaEncabezado (
+                PlanillaEncId INT IDENTITY(1,1) PRIMARY KEY,
+                IdGoAnyWhere VARCHAR(255) NULL,
+                FechaCreacionPlanilla DATETIME NULL,
+                UsuarioCreacionPlanilla VARCHAR(255) NULL,
+                TotalEsperadoRecaudar DECIMAL(18,4) NULL,
+                TotalRecaudado DECIMAL(18,4) NULL,
+                TotalDiferencia DECIMAL(18,4) NULL,
+                CantidadGuiasDespachadas DECIMAL(18,4) NULL,
+                CantidadGuiasConfirmadas DECIMAL(18,4) NULL
+            );
+
+            """)
+            conn.commit()
+            
+            
+            # =======================================================
+            # 2. Crear tabla PlanillaDetalles
+            # =======================================================
+            cursor.execute("""
+                CREATE TABLE dbo.PlanillaDetalles (
+                    PlanillaEncId INT NULL,
+                    IdGoAnyWhere VARCHAR(255) NULL,
+                    NumeroGuia VARCHAR(255) NULL,
+                    FechaCreacionGuia VARCHAR(255) NULL,
+                    FechaDespachoGuia VARCHAR(255) NULL,
+                    TipoGuia VARCHAR(100) NULL,
+                    BodegaId VARCHAR(100) NULL,
+                    TipoIdPropietarioTransportador VARCHAR(100) NULL,
+                    IdPropietarioTransportador VARCHAR(100) NULL,
+                    NombrePropietarioTransportador VARCHAR(255) NULL,
+                    Placa VARCHAR(50) NULL,
+                    TipoIdConductor VARCHAR(100) NULL,
+                    ConductorId VARCHAR(100) NULL,
+                    NombreConductor VARCHAR(255) NULL,
+                    EstadoGuiaOriginal VARCHAR(100) NULL,
+                    EstadoGuia VARCHAR(100) NULL,
+                    CantidadFacturas DECIMAL(10,4) NULL,
+                    FechaPromesa VARCHAR(255) NULL,
+                    FechaRetorno VARCHAR(255) NULL,
+                    ValorRecaudar DECIMAL(10,4) NULL,
+                );
+            """)
+            conn.commit()
             print("Tablas FactGuia y FacturasDetalladas creadas correctamente.")
 
         except Exception as e:
