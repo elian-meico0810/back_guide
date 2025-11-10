@@ -53,10 +53,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+#Credenailes GoAnyWhere
 GOANYWHERE_PAYLOAD_APLICACIONES_URL = "https://mftprb.meico.com.co/rest/forms/v1/obtenermenuportaldeaplicaciones/payload"
 GOANYWHERE_USER = secrets.get("GOANYWHEREUSER")
 GOANYWHERE_PASSWORD = secrets.get("GOANYWHEREPASSWORD")
 
+
+# Credenciales Azure 
+STOREGE_AZURE = env("STOREGE_AZURE")
+BASE_URL_AZURE = env("BASE_URL_AZURE")
 
 # Application definition
 

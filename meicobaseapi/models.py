@@ -339,6 +339,7 @@ class DocumentosAuditoria(Auditoria):
         
 class Consignaciones(Auditoria):
     numero_planilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
+    tipo_consignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
     numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
     numero_consignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
@@ -348,7 +349,7 @@ class Consignaciones(Auditoria):
     fecha_registro_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     valor_consignacion = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
-    ruta_archivo_soporte =  models.CharField(max_length=100, null=True, blank=True, help_text="Ruta del archivo en Azure")
+    ruta_archivo_soporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
     estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
     
     class Meta:
@@ -371,6 +372,7 @@ post_save.connect(consignaciones_post_save,sender=Consignaciones)
         
 class ConsignacionesAuditoria(Auditoria):
     numero_planilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
+    tipo_consignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
     numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
     numero_consignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
@@ -380,7 +382,7 @@ class ConsignacionesAuditoria(Auditoria):
     fecha_registro_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     valor_consignacion = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
-    ruta_archivo_soporte =  models.CharField(max_length=100, null=True, blank=True, help_text="Ruta del archivo en Azure")
+    ruta_archivo_soporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
     consignacion_id = models.IntegerField(null=True, blank=True, help_text="ID de la auditoria de la consignacion")
     estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
