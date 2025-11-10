@@ -12,4 +12,10 @@ class ConsignacionesRepository:
         except Exception as e:
             raise e
     
+    
+    def upload_file(self , data):
+        try:
+            return Consignaciones.objects.create(**data)
+        except Exception as e:
+            raise e
   

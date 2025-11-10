@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+
+from meicobaseapi.core.helpers.utils import model_to_dict
 
 
 class Auditoria(models.Model):
@@ -353,6 +356,19 @@ class Consignaciones(Auditoria):
         default_permissions = ()
         
         
+# ====================== AUDITORIA INTERNA ======================================
+def consignaciones_post_save(sender, instance, created, *args, **kwargs):
+        model_dict = model_to_dict(instance,
+        foreign_keys=[
+           
+        ])
+        model_dict.pop('model')
+        model_dict['consignacion_id'] = model_dict.pop('pk')
+        ConsignacionesAuditoria.objects.create(**model_dict)
+
+post_save.connect(consignaciones_post_save,sender=Consignaciones)
+        
+        
 class ConsignacionesAuditoria(Auditoria):
     numero_planilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
     numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
@@ -365,8 +381,9 @@ class ConsignacionesAuditoria(Auditoria):
     fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     valor_consignacion = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
     ruta_archivo_soporte =  models.CharField(max_length=100, null=True, blank=True, help_text="Ruta del archivo en Azure")
+    consignacion_id = models.IntegerField(null=True, blank=True, help_text="ID de la auditoria de la consignacion")
     estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
-    
+
     class Meta:
         db_table = 'ConsignacionessAuditoria'
         default_permissions = ()

@@ -1,6 +1,6 @@
 
 from datetime import datetime
-
+from django.core import serializers as django_serializer
 
 def setActorRequest(request_data, user, update=False):
    
@@ -42,3 +42,16 @@ def formatErrors(errors):
     if custom_message_error == 'Este campo no puede ser nulo.':
         custom_message_error = f'El campo {first_error_key} es requerido.'
     return custom_message_error
+
+
+def model_to_dict(model,foreign_keys=None)->dict:
+    """Funcion que convierte un modelo en un diccionario"""
+    model_formatted = django_serializer.serialize('python', [ model])
+    model_formatted = model_formatted[0]
+    model_formatted["fields"]['pk']= model_formatted['pk']
+    model_formatted["fields"]['model']= model_formatted['model']
+    if foreign_keys :
+        for field in foreign_keys :
+            model_formatted["fields"][field+'_id'] =model_formatted["fields"].pop(field)
+    
+    return model_formatted['fields']
