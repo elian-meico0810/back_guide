@@ -5,6 +5,7 @@ from meicobaseapi.models import Consignaciones
 
 class ConsignacionesRepository:
     
+    
     def get_all(self):
         try:
             data = Consignaciones.objects.filter(estado=True)
@@ -37,6 +38,24 @@ class ConsignacionesRepository:
             consignacion.save()  
 
             return consignacion
+        except Exception as e:
+            raise e
+        
+        
+    def group_parameer(self):
+        """
+            - Funcion que agrupa paramtros para llenar 
+            los filtros del modulo de consignaciones 
+        """
+        try:
+            data = Consignaciones.objects.filter(estado=True).values(
+                'fecha_consignacion_corta',
+                'valor_consignacion',
+                'tipo_consignacion',
+                'nombre_archivo'
+            ).distinct()
+
+            return data           
         except Exception as e:
             raise e
   

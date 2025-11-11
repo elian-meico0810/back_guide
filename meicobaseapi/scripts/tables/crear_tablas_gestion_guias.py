@@ -35,6 +35,7 @@ class crear_tablas_gestion_guias:
                 CREATE TABLE dbo.PlanillaDetalleFactura (
                     PlanillaEncId INT,
                     NumeroGuia VARCHAR(255) NULL,
+                    GoanywhereId VARCHAR(255) NULL,
                     NumeroDocumento VARCHAR(50) NULL,
                     TipoDocumento VARCHAR(255) NULL,
                     CodigoCliente VARCHAR(50) NULL,
@@ -60,6 +61,7 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
             CREATE TABLE dbo.Documentos (
                 PlanillaEncId INT NULL,
+                GoanywhereId VARCHAR(255) NULL,
                 NumeroGuia VARCHAR(255) NULL,
                 NumeroDocumento VARCHAR(50) NULL,
                 TipoDocumento VARCHAR(255) NULL,
@@ -83,6 +85,7 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
             CREATE TABLE dbo.PlanillaEncabezado (
                 PlanillaEncId INT IDENTITY(1,1) PRIMARY KEY,
+                GoanywhereId VARCHAR(255) NULL,
                 IdGoAnyWhere VARCHAR(255) NULL,
                 FechaCreacionPlanilla DATETIME NULL,
                 UsuarioCreacionPlanilla VARCHAR(255) NULL,
@@ -103,6 +106,7 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
                 CREATE TABLE dbo.PlanillaDetalles (
                     PlanillaEncId INT NULL,
+                    GoanywhereId VARCHAR(255) NULL,
                     NumeroGuia VARCHAR(255) NULL,
                     FechaCreacionGuia VARCHAR(255) NULL,
                     FechaDespachoGuia VARCHAR(255) NULL,

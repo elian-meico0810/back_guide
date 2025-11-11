@@ -13,8 +13,16 @@ class ConsignacionesService:
         except Exception as e:
             raise e
         
+        
     def create_consignaciones(self, data):
         try:
             return self.repo.upload_file(data)
+        except Exception as e:
+            raise e
+        
+        
+    def get_group_parametros(self):
+        try:
+            return self.repo.group_parameer()
         except Exception as e:
             raise e

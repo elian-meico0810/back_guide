@@ -1,4 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
+from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes, authentication_classes
 from rest_framework.decorators import permission_classes
@@ -26,20 +27,28 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     def obtener_planilla_detalle(self, request):
         try:
             # Obtenemos el queryset desde el servicio
-            users = self.service.get_all_consignaciones()
+            data = self.service.get_all_consignaciones()
 
             paginator = self.pagination_class()
 
             page = request.query_params.get("page", None)
+            search = request.query_params.get("search", None)
 
+            if search:
+                data = data.filter(Q(fecha_consignacion_corta__icontains=search) |
+                                Q(tipo_consignacion__icontains=search) |  
+                                Q(valor_consignacion__icontains=search) | 
+                                Q(nombre_archivo__icontains=search) )
+            #============================================================
+                
             if page is not None:
                 # Aplica paginación
-                paginated_users = paginator.paginate_queryset(users, request)
+                paginated_users = paginator.paginate_queryset(data, request)
                 serializer = self.list_serializer_class(paginated_users, many=True)
                 data = paginator.get_paginated_response(serializer.data).data
             else:
                 # Devuelve todos los resultados sin paginar
-                serializer = self.list_serializer_class(users, many=True)
+                serializer = self.list_serializer_class(data, many=True)
                 data = serializer.data
 
             return APIResponse.successful(
@@ -65,3 +74,35 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.successful(message="Operación exitosa", data=[])
         except Exception as e:
             return APIResponse.failed(e)
+        
+        
+    @swagger_auto_schema(tags=["consignaciones"])
+    @action(detail=False, methods=["GET"], url_path="group-paramtros", name="agrupar paramtros")
+    @permission_classes([AllowAnonymous])        
+    def group_parametros_consignaciones(self, request):
+        try:
+            # Obtenemos el queryset desde el servicio
+            users = self.service.get_group_parametros()
+
+            paginator = self.pagination_class()
+
+            page = request.query_params.get("page", None)
+
+            if page is not None:
+                # Aplica paginación
+                paginated_users = paginator.paginate_queryset(users, request)
+                serializer = self.list_serializer_class(paginated_users, many=True)
+                data = paginator.get_paginated_response(serializer.data).data
+            else:
+                # Devuelve todos los resultados sin paginar
+                serializer = self.list_serializer_class(users, many=True)
+                data = serializer.data
+
+            return APIResponse.successful(
+                message="Operación exitosa",
+                data=data
+            )
+
+            return True
+        except Exception as e:
+            raise e
