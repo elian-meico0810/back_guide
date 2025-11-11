@@ -92,7 +92,7 @@ class GestionRepository:
         
     def get_all_planilla_encabezado(self):
         try:
-            data = PlanillaEncabezado.objects.filter(estado=True)
+            data = PlanillaEncabezado.objects.filter(estado=True).order_by('-id')
             return data
         except Exception as e:
             raise e

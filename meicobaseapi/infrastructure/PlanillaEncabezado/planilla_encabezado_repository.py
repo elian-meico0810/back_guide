@@ -7,7 +7,7 @@ class PlanillaEncabezadoRepository:
     
     def get_all(self):
         try:
-            data = PlanillaEncabezado.objects.filter(estado=True)
+            data = PlanillaEncabezado.objects.filter(estado=True).order_by('-id')
             return data
         except Exception as e:
             raise e

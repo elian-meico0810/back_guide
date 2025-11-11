@@ -102,7 +102,20 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
                 message="Operación exitosa",
                 data=data
             )
-
-            return True
         except Exception as e:
             raise e
+        
+        
+    @swagger_auto_schema(tags=["consignaciones"])
+    @action(detail=False, methods=["DELETE"], url_path="eliminar", name="Eliminar adjunto de consignacion")
+    def eliminar_consignacion(self, request):
+        try:
+            pk = request.query_params.get("id", None)
+            if not pk:
+                return APIResponse.error(message="El ID de la consignacion es requerido.", data={})
+            
+            self.service.destroy(pk)
+            
+            return APIResponse.successful(message="Operación exitosa", data=[])
+        except Exception as e:
+            return APIResponse.failed(e)

@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from django.utils import timezone
 from meicobaseapi.core.helpers.utils import upload_to_azure
 from meicobaseapi.models import Consignaciones
 
@@ -8,7 +9,7 @@ class ConsignacionesRepository:
     
     def get_all(self):
         try:
-            data = Consignaciones.objects.filter(estado=True)
+            data = Consignaciones.objects.filter(estado=True).order_by('-id')
             return data
         except Exception as e:
             raise e
@@ -56,6 +57,25 @@ class ConsignacionesRepository:
             ).distinct()
 
             return data           
+        except Exception as e:
+            raise e
+        
+        
+    def delete(self, id: int):
+        try:
+            consignacion = Consignaciones.objects.filter(id=id).first()
+            if not consignacion:
+                raise Exception("El registro no existe.")
+            
+            # Registrar información de eliminación
+            # consignacion.deleted_by = user
+            consignacion.deleted_at = timezone.now()
+            consignacion.save()
+    
+            # Eliminar el registro (opcional, si deseas borrado físico)
+            consignacion.delete()
+
+            return True
         except Exception as e:
             raise e
   

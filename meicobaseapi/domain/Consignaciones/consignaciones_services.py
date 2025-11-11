@@ -26,3 +26,9 @@ class ConsignacionesService:
             return self.repo.group_parameer()
         except Exception as e:
             raise e
+        
+    def destroy(self, id):
+        try:
+           return self.repo.delete(id)
+        except Exception as e:
+            raise e
