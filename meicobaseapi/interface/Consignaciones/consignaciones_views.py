@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 from meicobaseapi.core.helpers.utils import formatErrors
 from meicobaseapi.core.jwt_auth import JWTAuthentication
 from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
@@ -9,8 +11,9 @@ from meicobaseapi.core.permisions_decorator import has_required_permission
 from meicobaseapi.domain.Consignaciones.consignaciones_services import ConsignacionesService
 from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
+from meicobaseapi.enums.GoAnWhere.gaw_enum import CredencialesAzure
 from meicobaseapi.interface.Consignaciones.consignaciones_serializers import ConsignacionesListSerializer, ConsignacionesSerializer
-from rest_framework.decorators import action, permission_classes, authentication_classes
+from rest_framework.decorators import action, permission_classes
  
 class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     service =  ConsignacionesService()
@@ -105,7 +108,8 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
                 data=data
             )
         except Exception as e:
-            raise e
+            return APIResponse.failed(e)
+
         
         
     @swagger_auto_schema(tags=["consignaciones"])
@@ -121,3 +125,48 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.successful(message="Operación exitosa", data=[])
         except Exception as e:
             return APIResponse.failed(e)
+        
+    @swagger_auto_schema(tags=["consignaciones"])
+    @action(detail=False, methods=["POST"], url_path="public-azure", name="publicar ruta temporal de azure")        
+    def public_azure(self, request):
+     try:
+        # Credenciales de tus enums
+        connection_string = CredencialesAzure.STOREGE_AZURE.value
+        container_name = CredencialesAzure.CONTAINER_AZURE_DEV.value
+        base_url = CredencialesAzure.BASE_URL_AZURE.value
+
+        # Cliente de blob
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+        container_client = blob_service_client.get_container_client(container_name)
+        nombre = request.data.get('file_nombre', None)
+        folder = request.data.get('folder', None)
+        
+        if not nombre:
+            raise Exception("El nombre del arhcivo es requerido.")
+        
+        if not folder:
+            raise Exception("El nombre del arhcivo es requerido.")
+            
+        # Nombre de un archivo de prueba (puede ser cualquier blob que exista)
+        blob_name = f"{folder}/{nombre}"
+
+        # Generar SAS temporal de lectura (10 minutos)
+        sas_token = generate_blob_sas(
+            account_name=blob_service_client.account_name,
+            container_name=container_name,
+            blob_name=blob_name,
+            account_key=blob_service_client.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(minutes=10)
+        )
+
+        # URL completa con SAS
+        url_sas = f"{base_url}{folder}/{nombre}?{sas_token}"
+
+        return APIResponse.successful(
+             message="Operación exitosa, SAS generado por 10 minutos",
+             data={"url_sas": url_sas}
+         )
+
+     except Exception as e:
+             return APIResponse.failed(e)
