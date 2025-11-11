@@ -1,16 +1,17 @@
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Q
 from rest_framework import viewsets, status
-from rest_framework.decorators import action, permission_classes, authentication_classes
 from rest_framework.decorators import permission_classes
 from meicobaseapi.core.helpers.utils import formatErrors
+from meicobaseapi.core.jwt_auth import JWTAuthentication
 from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
+from meicobaseapi.core.permisions_decorator import has_required_permission
 from meicobaseapi.domain.Consignaciones.consignaciones_services import ConsignacionesService
 from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
 from meicobaseapi.interface.Consignaciones.consignaciones_serializers import ConsignacionesListSerializer, ConsignacionesSerializer
-
-
+from rest_framework.decorators import action, permission_classes, authentication_classes
+ 
 class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     service =  ConsignacionesService()
     # Definimos el serializador primcipal
@@ -19,7 +20,9 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     list_serializer_class = ConsignacionesListSerializer
     # Aplicamos la paginacion
     pagination_class = ResultsSetPagination
-
+    # Validamos la autentiacion
+    authentication_classes= [JWTAuthentication]
+ 
 
     @swagger_auto_schema(tags=["consignaciones"])
     @action(detail=False, methods=["GET"], url_path="obtener-consignaciones", name="Obtener consignaciones")
@@ -77,25 +80,24 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
         
         
     @swagger_auto_schema(tags=["consignaciones"])
-    @action(detail=False, methods=["GET"], url_path="group-paramtros", name="agrupar paramtros")
-    @permission_classes([AllowAnonymous])        
+    @action(detail=False, methods=["GET"], url_path="group-paramtros", name="agrupar paramtros",
+    permission_classes=[has_required_permission(['0001'])])
     def group_parametros_consignaciones(self, request):
         try:
             # Obtenemos el queryset desde el servicio
-            users = self.service.get_group_parametros()
+            data = self.service.get_group_parametros()
 
             paginator = self.pagination_class()
 
             page = request.query_params.get("page", None)
-
             if page is not None:
                 # Aplica paginación
-                paginated_users = paginator.paginate_queryset(users, request)
+                paginated_users = paginator.paginate_queryset(data, request)
                 serializer = self.list_serializer_class(paginated_users, many=True)
                 data = paginator.get_paginated_response(serializer.data).data
             else:
                 # Devuelve todos los resultados sin paginar
-                serializer = self.list_serializer_class(users, many=True)
+                serializer = self.list_serializer_class(data, many=True)
                 data = serializer.data
 
             return APIResponse.successful(

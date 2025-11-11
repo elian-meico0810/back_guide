@@ -12,7 +12,6 @@ class JWTAuthentication(BaseAuthentication):
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             return None
-
         try:
             prefix, token = auth_header.split(' ')
             if prefix.lower() != 'bearer':

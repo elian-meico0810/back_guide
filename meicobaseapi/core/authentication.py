@@ -4,6 +4,7 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import BasePermission
 from meicobaseapi import settings
+from meicobaseapi.core.APIResponse import APIResponse
 
 
 class TokenValidate(BaseAuthentication):
