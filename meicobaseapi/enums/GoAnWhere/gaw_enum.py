@@ -16,3 +16,4 @@ class CredencialesAzure(Enum):
     #Crenciales Azure
     STOREGE_AZURE = os.getenv("STOREGE_AZURE")
     BASE_URL_AZURE = os.getenv("BASE_URL_AZURE") 
+    CONTAINER_AZURE_DEV = os.getenv("CONTAINER_AZURE_DEV") 

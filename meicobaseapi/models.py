@@ -350,6 +350,7 @@ class Consignaciones(Auditoria):
     fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
     valor_consignacion = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
     ruta_archivo_soporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
+    nombre_archivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
     estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
     
     class Meta:
@@ -376,6 +377,7 @@ class ConsignacionesAuditoria(Auditoria):
     numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
     numero_documento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
     numero_consignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
+    nombre_archivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
     numero_consignacion_banco  = models.CharField(max_length=255, null=True, blank=True, help_text="Número de consignacion banco")
     fecha_registro_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de registro yyyymmdd")
     fecha_consignacion_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de consignacion yyyymmdd")

@@ -64,8 +64,6 @@ def model_to_dict(model,foreign_keys=None)->dict:
 
 def upload_to_azure(file_data, blob_name=None, subfolder=""):
     try:
-        print("upload_to_azure: ")
-
         # Procesar el data URI
         info = get_content_info(file_data)
         file_bytes = base64.b64decode(info['content'])
@@ -85,7 +83,7 @@ def upload_to_azure(file_data, blob_name=None, subfolder=""):
         # Conexión a Azure
         connection_string = CredencialesAzure.STOREGE_AZURE.value
         blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-        container_name = "gestorguiasdev"
+        container_name = CredencialesAzure.CONTAINER_AZURE_DEV.value
         container_client = blob_service_client.get_container_client(container_name)
 
         if not container_client.exists():
