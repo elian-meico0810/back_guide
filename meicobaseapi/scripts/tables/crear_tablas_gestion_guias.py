@@ -14,9 +14,6 @@ class crear_tablas_gestion_guias:
             # 1. Eliminar tablas si ya existen
             # =======================================================
             cursor.execute("""
-            IF OBJECT_ID('dbo.FactGuia', 'U') IS NOT NULL
-                DROP TABLE dbo.FactGuia;
-
             IF OBJECT_ID('dbo.PlanillaDetalleFactura', 'U') IS NOT NULL
                 DROP TABLE dbo.PlanillaDetalleFactura;
                 
@@ -32,59 +29,27 @@ class crear_tablas_gestion_guias:
             conn.commit()
 
             # =======================================================
-            # 2. Crear tabla FactGuia
-            # =======================================================
-            cursor.execute("""
-            CREATE TABLE dbo.FactGuia (
-                idGoAnyWhere VARCHAR(50),
-                NumeroGuia VARCHAR(255) NULL,
-                Transportador VARCHAR(50),
-                CodigoCliente VARCHAR(50),
-                NombreCliente VARCHAR(100),
-                Ciudad VARCHAR(50),
-                NumeroFactura INT,
-                FechaFactura VARCHAR(50),
-                Vendedor VARCHAR(10),
-                ValorOriginal DECIMAL(18,2),
-                DsctoFinanciero DECIMAL(18,2),
-                NuevoDsctoFinanciero DECIMAL(18,2),
-                CantidadNotasCredito VARCHAR(100),
-                TotalNotasCredito DECIMAL(18,2),
-                ValorConsignar DECIMAL(18,2),
-                ReporteBrinks DECIMAL(18,2),
-                DiferenciaValor DECIMAL(18,2),
-                FechaDespachoCompleta DATETIME,
-                Observaciones VARCHAR(MAX),
-                Cargue VARCHAR(50)
-            );
-            """)
-            conn.commit()
-
-            # =======================================================
             # 2. Crear tabla PlanillaDetalleFactura
             # =======================================================
             cursor.execute("""
                 CREATE TABLE dbo.PlanillaDetalleFactura (
                     PlanillaEncId INT,
-                    IdGoAnyWhere VARCHAR(255) NULL,
                     NumeroGuia VARCHAR(255) NULL,
                     NumeroDocumento VARCHAR(50) NULL,
                     TipoDocumento VARCHAR(255) NULL,
+                    CodigoCliente VARCHAR(50) NULL,
+                    RazonSocialCliente VARCHAR(255) NULL,     
                     ValorFactura DECIMAL(15,4) NULL,
-                    ValorDevolucion DECIMAL(15,4) NULL,
+                    DfrFactura DECIMAL(15,4) NULL,
+                    NumerosNc DECIMAL(15,4) NULL,
+                    ValorNc DECIMAL(15,4) NULL,
+                    DfrReal DECIMAL(15,4) NULL,
                     ValorEsperadoRecaudar DECIMAL(15,4) NULL,
                     ValorRecaudado DECIMAL(15,4) NULL,
                     Diferencia DECIMAL(15,4) NULL,
-                    CodigoCliente VARCHAR(50) NULL,
-                    RazonSocialCliente VARCHAR(255) NULL,
-                    DrfFactura DECIMAL(15,4) NULL,
-                    NumerosNc DECIMAL(15,4) NULL,
-                    ValorNc DECIMAL(15,4) NULL,
-                    DrfReal DECIMAL(15,4) NULL,
-                    Bodega VARCHAR(255) NULL,
-                    EstadoPlanilla VARCHAR(255) NULL,
+                    Estado VARCHAR(255) NULL,
                     CodigoCondicionPago VARCHAR(255) NULL,
-                    NombreCondicionPago VARCHAR(255) NULL
+                    NombreCondicionPago VARCHAR(255) NULL,
                 );
             """)
             conn.commit()
@@ -95,7 +60,6 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
             CREATE TABLE dbo.Documentos (
                 PlanillaEncId INT NULL,
-                IdGoAnyWhere VARCHAR(255) NULL,
                 NumeroGuia VARCHAR(255) NULL,
                 NumeroDocumento VARCHAR(50) NULL,
                 TipoDocumento VARCHAR(255) NULL,
@@ -106,7 +70,8 @@ class crear_tablas_gestion_guias:
                 NombreBodega VARCHAR(255) NULL,
                 CodigoCliente VARCHAR(50) NULL,
                 NombreCliente VARCHAR(255) NULL,
-                CondicionPago VARCHAR(100) NULL,           
+                CodigoCondicionPago VARCHAR(255) NULL,
+                NombreCondicionPago VARCHAR(255) NULL,         
             );
 
             """)
@@ -138,7 +103,6 @@ class crear_tablas_gestion_guias:
             cursor.execute("""
                 CREATE TABLE dbo.PlanillaDetalles (
                     PlanillaEncId INT NULL,
-                    IdGoAnyWhere VARCHAR(255) NULL,
                     NumeroGuia VARCHAR(255) NULL,
                     FechaCreacionGuia VARCHAR(255) NULL,
                     FechaDespachoGuia VARCHAR(255) NULL,

@@ -1,8 +1,5 @@
 import uuid
 from rest_framework import serializers
-from azure.storage.blob import BlobServiceClient
-from meicobaseapi.core.helpers.utils import get_content_info, upload_to_azure
-from meicobaseapi.enums.GoAnWhere.gaw_enum import CredencialesAzure
 from meicobaseapi.models import Consignaciones
 
 class ConsignacionesSerializer(serializers.ModelSerializer):
@@ -17,7 +14,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                 'error_messages': {
                     'required': 'El tipo de consignación es requerido.',
                     'blank': 'El tipo de consignación no puede estar vacío.',
-                    'null': 'El tipo de consignación no puede ser nulo.',
+                    'null': 'El tipo de consignación es requerido.',
                 }
             },
             'numero_guia': {
@@ -27,7 +24,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                 'error_messages': {
                     'required': 'El número de guía es requerido.',
                     'blank': 'El número de guía no puede estar vacío.',
-                    'null': 'El número de guía no puede ser nulo.',
+                    'null': 'El número de guía es requerido.',
                 }
             },
             'ruta_archivo_soporte': {
@@ -37,7 +34,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                 'error_messages': {
                     'required': 'La ruta del archivo de soporte es requerida.',
                     'blank': 'La ruta del archivo no puede estar vacía.',
-                    'null': 'La ruta del archivo no puede ser nula.',
+                    'null': 'La ruta del archivo de soporte es requerido.',
                 }
             },
             'valor_consignacion': {
@@ -46,7 +43,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                 'error_messages': {
                     'required': 'El valor de la consignación es requerido.',
                     'invalid': 'El valor debe ser un número decimal válido.',
-                    'null': 'El valor no puede ser nulo.',
+                    'null': 'El valor es requerido.',
                 }
             },
             'numero_planilla': {
@@ -54,7 +51,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                 'error_messages': {
                     'required': 'El número de planilla es requerido.',
                     'blank': 'El número de planilla no puede estar vacío.',
-                    'null': 'El número de planilla no puede ser nulo.',
+                    'null': 'El número de planilla es requerido',
                 }
             },
         }
