@@ -54,3 +54,52 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.failed(e)
         
         
+        
+    @swagger_auto_schema(tags=["PlanillaDetalle"])
+    @action(detail=False, methods=["GET"], url_path="obtener-detalle-guia", name="Obtener detalle guia")
+    @permission_classes([AllowAnonymous])
+    def obtener_detalle_guia(self, request):
+        try:
+            # Obtenemos la lista procesada desde el servicio
+            data = self.service.get_all_detalle_guia()  
+            paginator = self.pagination_class()
+            
+            paginator.page_size = request.query_params.get("page_size", 10)
+
+            #  Paginar manualmente la lista
+            page = paginator.paginate_queryset(data, request)
+            if page is not None:
+                data = paginator.get_paginated_response(page).data  
+            else:
+                data = {
+                    "count": len(data),
+                    "next": None,
+                    "previous": None,
+                    "results": data
+                }
+
+            return APIResponse.successful(
+                message="Operación exitosa",
+                data=data
+            )
+
+        except Exception as e:
+            return APIResponse.failed(e)
+        
+        
+    @swagger_auto_schema(tags=["PlanillaDetalle"])
+    @action(detail=False, methods=["GET"], url_path="obtener-total-guias", name="Obtener total de guia")
+    @permission_classes([AllowAnonymous])
+    def obtener_total_guia(self, request):
+        try:
+            # Obtenemos la lista procesada desde el servicio
+            data = self.service.get_totals_guide()  
+
+            return APIResponse.successful(
+                message="Operación exitosa",
+                data=data
+            )
+        except Exception as e:
+            return APIResponse.failed(e)
+
+
