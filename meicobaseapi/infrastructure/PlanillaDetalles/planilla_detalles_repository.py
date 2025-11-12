@@ -1,4 +1,4 @@
-from django.db.models import Sum, Max
+from django.db.models import Sum, Max, Q
 from django.db.models.functions import Lower
 from meicobaseapi.models import PlanillaDetalles, PlanillaDetalleFactura
 
@@ -12,21 +12,29 @@ class PlanillaDetallesRepository:
             raise e
     
   
-    def get_details_guide(self):
+    def get_details_guide(self, search=None):
         try:
-            data = (
-                PlanillaDetalles.objects.filter(estado=True)
-                .values(
-                    'planilla_enc_id',
-                    'id_go_any_where',
-                    'numero_guia',
-                    'fecha_creacion_guia',
-                    'estado_guia',
-                    'valor_recaudar',
-                    'nombre_propietario_transportador'
-                )
-                .distinct()
-            )
+            data = PlanillaDetalles.objects.filter(estado=True)
+
+            # Solo aplicamos filtro si viene search
+            if search:
+                search_words = search.strip().split()
+                for word in search_words:
+                    data = data.filter(
+                        Q(nombre_propietario_transportador__icontains=word) |
+                        Q(numero_guia__icontains=word)
+                    )
+    
+            # Valores que queremos devolver
+            data = data.values(
+                'planilla_enc_id',
+                'id_go_any_where',
+                'numero_guia',
+                'fecha_creacion_guia',
+                'estado_guia',
+                'valor_recaudar',
+                'nombre_propietario_transportador'
+            ).distinct()
 
             resultado = []
 
@@ -60,20 +68,28 @@ class PlanillaDetallesRepository:
             raise e
 
 
-    def get_totales_completos(self):
+    def get_totales_completos(self, search=None):
         try:
-            guias = (
-                PlanillaDetalles.objects.filter(estado=True)
-                .annotate(estado_lower=Lower('estado_guia'))
-                .filter(estado_lower__in=['confirmada', 'despachada'])
-                .values(
-                    'planilla_enc_id',
-                    'id_go_any_where',
-                    'numero_guia',
-                    'estado_lower'
-                )
-                .distinct()
-            )   
+            guias = PlanillaDetalles.objects.filter(estado=True)
+
+            guias = guias.annotate(estado_lower=Lower('estado_guia')).filter(
+                estado_lower__in=['confirmada', 'despachada']
+            )
+
+            if search:
+                search_words = search.strip().split()
+                for word in search_words:
+                    guias = guias.filter(
+                        Q(nombre_propietario_transportador__icontains=word) |
+                        Q(numero_guia__icontains=word)
+                    )
+
+            guias = guias.values(
+                'planilla_enc_id',
+                'id_go_any_where',
+                'numero_guia',
+                'estado_lower'
+            ).distinct()
 
             total_confirmada = 0
             total_despachada = 0

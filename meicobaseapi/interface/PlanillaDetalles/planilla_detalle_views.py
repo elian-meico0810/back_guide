@@ -1,5 +1,4 @@
 from drf_yasg.utils import swagger_auto_schema
-from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes
 from meicobaseapi.core.jwt_auth import JWTAuthentication
@@ -60,12 +59,16 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     @permission_classes([AllowAnonymous])
     def obtener_detalle_guia(self, request):
         try:
-            # Obtenemos la lista procesada desde el servicio
-            data = self.service.get_all_detalle_guia()  
-            paginator = self.pagination_class()
+            search = request.query_params.get("search", None)
             
+            # Obtenemos la lista procesada desde el servicio
+            data = self.service.get_all_detalle_guia(search)  # debe ser queryset
+      
+            paginator = self.pagination_class()
             paginator.page_size = request.query_params.get("page_size", 10)
-
+            
+            # Realizamos el like
+     
             #  Paginar manualmente la lista
             page = paginator.paginate_queryset(data, request)
             if page is not None:
@@ -92,8 +95,10 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     @permission_classes([AllowAnonymous])
     def obtener_total_guia(self, request):
         try:
+            search = request.query_params.get("search", None)
+
             # Obtenemos la lista procesada desde el servicio
-            data = self.service.get_totals_guide()  
+            data = self.service.get_totals_guide(search)  
 
             return APIResponse.successful(
                 message="Operación exitosa",

@@ -13,15 +13,16 @@ class PlanillaDetallesService:
         except Exception as e:
             raise e
 
-    def get_all_detalle_guia(self):
+       
+    def get_all_detalle_guia(self, search=None):
         try:
-            return self.repo.get_details_guide()
+            return self.repo.get_details_guide(search)
         except Exception as e:
             raise e
         
         
-    def get_totals_guide(self):
+    def get_totals_guide(self,search=None):
         try:
-            return self.repo.get_totales_completos()
+            return self.repo.get_totales_completos(search)
         except Exception as e:
             raise e
