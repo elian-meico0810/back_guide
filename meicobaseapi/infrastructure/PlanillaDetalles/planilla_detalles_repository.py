@@ -12,7 +12,7 @@ class PlanillaDetallesRepository:
             raise e
     
   
-    def get_details_guide(self, search=None):
+    def get_details_guide(self, search=None, estado_guia=None, transportador=None, bodega_id=None):
         try:
             data = PlanillaDetalles.objects.filter(estado=True)
 
@@ -24,7 +24,16 @@ class PlanillaDetallesRepository:
                         Q(nombre_propietario_transportador__icontains=word) |
                         Q(numero_guia__icontains=word)
                     )
-    
+                    
+            if estado_guia:
+                data = data.filter(estado_guia=estado_guia) 
+                
+            if bodega_id:
+                data = data.filter(bodega_id=bodega_id) 
+
+            if transportador:
+                data = data.filter(nombre_propietario_transportador=transportador)   
+                                  
             # Valores que queremos devolver
             data = data.values(
                 'planilla_enc_id',
@@ -68,7 +77,7 @@ class PlanillaDetallesRepository:
             raise e
 
 
-    def get_totales_completos(self, search=None):
+    def get_totales_completos(self, search=None, bodega_id=None):
         try:
             guias = PlanillaDetalles.objects.filter(estado=True)
 
@@ -83,7 +92,10 @@ class PlanillaDetallesRepository:
                         Q(nombre_propietario_transportador__icontains=word) |
                         Q(numero_guia__icontains=word)
                     )
-
+                    
+            if bodega_id:
+                guias = guias.filter(bodega_id=bodega_id) 
+                
             guias = guias.values(
                 'planilla_enc_id',
                 'id_go_any_where',
@@ -128,3 +140,19 @@ class PlanillaDetallesRepository:
 
         except Exception as e:
             raise e 
+        
+        
+    def get_parametros_filtro(self, bodega_id=None):
+        try:
+            data = PlanillaDetalles.objects.filter(estado=True)
+            if bodega_id:
+                data = data.filter(bodega_id=bodega_id) 
+            # Valores que queremos devolver
+            data = data.values(
+                estado_guia='estado_guia',
+                transportador='nombre_propietario_transportador'
+            ).distinct()
+            
+            return data
+        except Exception as e:
+            raise e

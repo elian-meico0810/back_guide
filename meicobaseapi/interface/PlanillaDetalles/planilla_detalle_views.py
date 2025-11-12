@@ -60,9 +60,11 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     def obtener_detalle_guia(self, request):
         try:
             search = request.query_params.get("search", None)
-            
+            estado_guia = request.query_params.get("estado_guia", None)
+            transportador = request.query_params.get("transportador", None)
+
             # Obtenemos la lista procesada desde el servicio
-            data = self.service.get_all_detalle_guia(search)  # debe ser queryset
+            data = self.service.get_all_detalle_guia(search,estado_guia, transportador)
       
             paginator = self.pagination_class()
             paginator.page_size = request.query_params.get("page_size", 10)
@@ -73,6 +75,7 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             page = paginator.paginate_queryset(data, request)
             if page is not None:
                 data = paginator.get_paginated_response(page).data  
+                
             else:
                 data = {
                     "count": len(data),
@@ -108,3 +111,19 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             return APIResponse.failed(e)
 
 
+    @swagger_auto_schema(tags=["PlanillaDetalle"])
+    @action(detail=False, methods=["GET"], url_path="obtener-parametros-guias", name="Obtener parametros de guia")
+    @permission_classes([AllowAnonymous])
+    def obtener_paramtetros_guia(self, request):
+        try:
+            search = request.query_params.get("search", None)
+
+            # Obtenemos la lista procesada desde el servicio
+            data = self.service.get_filter()  
+
+            return APIResponse.successful(
+                message="Operación exitosa",
+                data=data
+            )
+        except Exception as e:
+            return APIResponse.failed(e)

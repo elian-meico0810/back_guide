@@ -14,9 +14,9 @@ class PlanillaDetallesService:
             raise e
 
        
-    def get_all_detalle_guia(self, search=None):
+    def get_all_detalle_guia(self, search=None, estado_guia=None, transportador=None):
         try:
-            return self.repo.get_details_guide(search)
+            return self.repo.get_details_guide(search, estado_guia, transportador)
         except Exception as e:
             raise e
         
@@ -24,5 +24,11 @@ class PlanillaDetallesService:
     def get_totals_guide(self,search=None):
         try:
             return self.repo.get_totales_completos(search)
+        except Exception as e:
+            raise e
+        
+    def get_filter(self):
+        try:
+            return self.repo.get_parametros_filtro()
         except Exception as e:
             raise e
