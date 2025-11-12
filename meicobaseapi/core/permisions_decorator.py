@@ -18,10 +18,7 @@ class HasRequiredPermission(BasePermission):
 
             token_data = auth_result[0]  # ahora seguro
             permisos_token = token_data.get('permissions', [])
-            print(
-                "required_permissions: ",self.required_permissions,
-                "permisos_token: ",permisos_token,
-            )
+           
             for permiso in self.required_permissions:
                 if permiso in permisos_token:
                     return True

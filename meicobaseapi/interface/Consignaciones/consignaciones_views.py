@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Q
+from urllib.parse import quote
+from mimetypes import guess_type
 from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
@@ -130,42 +132,48 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     @action(detail=False, methods=["POST"], url_path="public-azure", name="publicar ruta temporal de azure")        
     def public_azure(self, request):
         try:
-            # Credenciales de tus enums
             connection_string = CredencialesAzure.STOREGE_AZURE.value
             container_name = CredencialesAzure.CONTAINER_AZURE_DEV.value
             base_url = CredencialesAzure.BASE_URL_AZURE.value
 
-            # Cliente de blob
             blob_service_client = BlobServiceClient.from_connection_string(connection_string)
             container_client = blob_service_client.get_container_client(container_name)
-            nombre = request.data.get('file_nombre', None)
-            folder = request.data.get('folder', None)
-            
-            if not nombre:
-                raise Exception("El nombre del arhcivo es requerido.")
-            
-            if not folder:
-                raise Exception("El nombre del arhcivo es requerido.")
-                
-            # Nombre de un archivo de prueba (puede ser cualquier blob que exista)
+
+            nombre = request.data.get('file_nombre')
+            folder = request.data.get('folder')
+
+            if not nombre or not folder:
+                raise Exception("El nombre y el folder son requeridos.")
+
             blob_name = f"{folder}/{nombre}"
 
-            # Generar SAS temporal de lectura (10 minutos)
+            # Detecta el tipo MIME según la extensión
+            mime_type, _ = guess_type(nombre)
+            mime_type = mime_type or "application/octet-stream"
+
+            # 🔹 Generar SAS incluyendo los encabezados de respuesta
             sas_token = generate_blob_sas(
                 account_name=blob_service_client.account_name,
                 container_name=container_name,
                 blob_name=blob_name,
                 account_key=blob_service_client.credential.account_key,
                 permission=BlobSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(minutes=10)
+                expiry=datetime.utcnow() + timedelta(minutes=10),
+                content_disposition="inline",
+                content_type=mime_type       
             )
 
-            # URL completa con SAS
-            url_sas = f"{base_url}{folder}/{nombre}?{sas_token}"
+            # Asegúrate de que base_url no tenga duplicado el contenedor
+            if base_url.endswith(container_name):
+                url_base = base_url
+            else:
+                url_base = f"{base_url}/{container_name}"
+
+            url_sas = f"{url_base}/{quote(blob_name)}?{sas_token}"
 
             return APIResponse.successful(
-                 message="Operación exitosa, SAS generado por 10 minutos",
-                 data={"url_sas": url_sas}
-             )
+                message="Operación exitosa, SAS generado por 10 minutos",
+                data={"url_sas": url_sas}
+            )
         except Exception as e:
-            return APIResponse.failed(e)
+            return APIResponse.error(message=str(e))
