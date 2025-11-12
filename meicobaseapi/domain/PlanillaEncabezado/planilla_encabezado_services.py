@@ -1,8 +1,6 @@
-
 from meicobaseapi.infrastructure.PlanillaDetalles.planilla_detalles_repository import PlanillaDetallesRepository
 
-
-class  PlanillaDetallesService:
+class PlanillaEncabezadoService:
 
     def __init__(self):
         self.repo = PlanillaDetallesRepository()
@@ -13,5 +11,4 @@ class  PlanillaDetallesService:
             return self.repo.get_all()
         except Exception as e:
             raise e
-        
         

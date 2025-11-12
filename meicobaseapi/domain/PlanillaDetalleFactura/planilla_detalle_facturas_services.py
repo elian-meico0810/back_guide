@@ -1,7 +1,7 @@
 from meicobaseapi.infrastructure.PlanillaDetalleFactura.planilla_detalles_factura_repository import PlanillaDetalleFacturaRepository
 
 
-class  PlanillaDetallesService:
+class PlanillaDetalleFacturasService:
 
     def __init__(self):
         self.repo = PlanillaDetalleFacturaRepository()

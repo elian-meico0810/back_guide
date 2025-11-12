@@ -1,21 +1,14 @@
-from meicobaseapi.infrastructure.GestionGuias.gestion_repository import GestionRepository
+from meicobaseapi.infrastructure.PlanillaDetalles.planilla_detalles_repository import PlanillaDetallesRepository
 
-class GuiasService:
+
+class PlanillaDetallesService:
 
     def __init__(self):
-        self.repo = GestionRepository()
+        self.repo = PlanillaDetallesRepository()
 
 
     def get_all_planilla_detalles(self):
         try:
-            return self.repo.ws_planilla_detalle()
+            return self.repo.get_all()
         except Exception as e:
             raise e
-        
-        
-    def get_all_planilla_encabezado(self):
-        try:
-            return self.repo.get_all_planilla_encabezado()
-        except Exception as e:
-            raise e
-  

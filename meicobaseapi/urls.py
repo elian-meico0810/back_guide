@@ -23,4 +23,6 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/', include('meicobaseapi.interface.Roles.roles_urls')),
     path('api/', include('meicobaseapi.interface.Consignaciones.consignaciones_urls')),
+    path('api/', include('meicobaseapi.interface.PlanillaDetalles.planilla_detalle_urls')),
+    path('api/', include('meicobaseapi.interface.PlanillaDetalleFactura.planilla_detalle_factura_urls')),
 ]
