@@ -9,14 +9,14 @@ from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
 from meicobaseapi.domain.PlanillaDetalleFactura.planilla_detalle_facturas_services import PlanillaDetalleFacturasService
 from rest_framework.decorators import action, permission_classes
-from meicobaseapi.interface.PlanillaDetalles.planilla_detalle_serializers import PlanillaDetallesListSerializer, PlanillaDetallesSerializer
+from meicobaseapi.interface.PlanillaDetalleFactura.planilla_detalle_factura_serializers import PlanillaDetalleFacturaSerializer, PlanillaDetalleFacturaListSerializer
  
 class PlanillaDetalleFacturaViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     service = PlanillaDetalleFacturasService()
     # Definimos el serializador primcipal
-    serializer_class = PlanillaDetallesSerializer
+    serializer_class = PlanillaDetalleFacturaSerializer
     # Definimos el serializador para listas primicipal
-    list_serializer_class = PlanillaDetallesListSerializer
+    list_serializer_class = PlanillaDetalleFacturaListSerializer
     # Aplicamos la paginacion
     pagination_class = ResultsSetPagination
     # Validamos la autentiacion
@@ -35,7 +35,10 @@ class PlanillaDetalleFacturaViewSet(viewsets.ViewSet, PaginationHandlerMixin):
 
             page = request.query_params.get("page", None)
             search = request.query_params.get("search", None)
-
+            if search:
+                data = data.filter(
+                        Q(numero_documento__icontains=search) 
+                    )
             #============================================================
             if page is not None:
                 # Aplica paginación
