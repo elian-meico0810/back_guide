@@ -12,7 +12,7 @@ class PlanillaDetallesRepository:
             raise e
     
   
-    def get_details_guide(self, search=None, estado_guia=None, transportador=None, bodega_id=None):
+    def get_details_guide(self, search, estado_guia, transportador, bodega_id):
         try:
             data = PlanillaDetalles.objects.filter(estado=True)
 
@@ -77,7 +77,7 @@ class PlanillaDetallesRepository:
             raise e
 
 
-    def get_totales_completos(self, search=None, bodega_id=None):
+    def get_totales_completos(self, search, bodega_id):
         try:
             guias = PlanillaDetalles.objects.filter(estado=True)
 
@@ -142,7 +142,7 @@ class PlanillaDetallesRepository:
             raise e 
         
         
-    def get_parametros_filtro(self, bodega_id=None):
+    def get_parametros_filtro(self, bodega_id):
         try:
             data = PlanillaDetalles.objects.filter(estado=True)
             if bodega_id:
@@ -154,5 +154,73 @@ class PlanillaDetallesRepository:
             ).distinct()
             
             return data
+        except Exception as e:
+            raise e
+
+
+    def get_numero_guia(self, search, estado_guia, transportador, bodega_id, numero_guia):
+        try:
+            data = PlanillaDetalles.objects.filter(estado=True)
+
+            # Solo aplicamos filtro si viene search
+            if search:
+                search_words = search.strip().split()
+                for word in search_words:
+                    data = data.filter(
+                        Q(nombre_propietario_transportador__icontains=word) |
+                        Q(numero_guia__icontains=word)
+                    )
+                    
+            if estado_guia:
+                data = data.filter(estado_guia=estado_guia) 
+                
+            if bodega_id:
+                data = data.filter(bodega_id=bodega_id) 
+
+            if transportador:
+                data = data.filter(nombre_propietario_transportador=transportador)   
+            
+            if numero_guia:
+               data = data.filter(numero_guia=numero_guia)   
+                    
+            # Valores que queremos devolver
+            data = data.values(
+                'planilla_enc_id',
+                'id_go_any_where',
+                'numero_guia',
+                'fecha_creacion_guia',
+                'estado_guia',
+                'valor_recaudar',
+                'nombre_propietario_transportador'
+            ).distinct()
+
+            resultado = []
+
+            for p in data:
+                # Facturas relacionadas activas con misma guía y planilla
+                facturas = PlanillaDetalleFactura.objects.filter(
+                    planilla_enc_id=p['planilla_enc_id'],
+                    id_go_any_where=p['id_go_any_where'],
+                    numero_guia=p['numero_guia'],
+                    estado=True
+                )
+
+                cantidad_facturas = facturas.count()
+                fecha_retorno_max = facturas.aggregate(
+                    fecha_retorno_max=Max('created_at')
+                )['fecha_retorno_max']
+
+                resultado.append({
+                    'planilla_enc_id': p['planilla_enc_id'],
+                    'id_go_any_where': p['id_go_any_where'],
+                    'numero_guia': p['numero_guia'],
+                    'fecha_creacion_guia': p['fecha_creacion_guia'],
+                    'estado_guia': p['estado_guia'],
+                    'valor_recaudar': float(p['valor_recaudar'] or 0),
+                    'transportador': p['nombre_propietario_transportador'],
+                    'cantidad_facturas': cantidad_facturas,
+                    'mayor_fecha_retorno': fecha_retorno_max
+                })
+            return resultado
         except Exception as e:
             raise e

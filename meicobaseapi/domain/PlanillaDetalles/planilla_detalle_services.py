@@ -14,21 +14,28 @@ class PlanillaDetallesService:
             raise e
 
        
-    def get_all_detalle_guia(self, search=None, estado_guia=None, transportador=None):
+    def get_all_detalle_guia(self, search, estado_guia, transportador, bodega_id):
         try:
-            return self.repo.get_details_guide(search, estado_guia, transportador)
+            return self.repo.get_details_guide(search, estado_guia, transportador, bodega_id)
         except Exception as e:
             raise e
         
         
-    def get_totals_guide(self,search=None):
+    def get_totals_guide(self, search, bodega_id):
         try:
-            return self.repo.get_totales_completos(search)
+            return self.repo.get_totales_completos(search, bodega_id)
         except Exception as e:
             raise e
         
     def get_filter(self):
         try:
             return self.repo.get_parametros_filtro()
+        except Exception as e:
+            raise e
+        
+    def get_numero_guia_ws(self, search, estado_guia, transportador, bodega_id, numero_guia):
+        try:
+            print("get_numero_guia 1: ",numero_guia)
+            return self.repo.get_numero_guia(search, estado_guia, transportador, bodega_id, numero_guia)
         except Exception as e:
             raise e
