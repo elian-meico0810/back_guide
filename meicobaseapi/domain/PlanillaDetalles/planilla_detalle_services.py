@@ -27,15 +27,14 @@ class PlanillaDetallesService:
         except Exception as e:
             raise e
         
-    def get_filter(self):
+    def get_filter(self, bodega_id):
         try:
-            return self.repo.get_parametros_filtro()
+            return self.repo.get_parametros_filtro(bodega_id)
         except Exception as e:
             raise e
         
     def get_numero_guia_ws(self, search, estado_guia, transportador, bodega_id, numero_guia):
         try:
-            print("get_numero_guia 1: ",numero_guia)
             return self.repo.get_numero_guia(search, estado_guia, transportador, bodega_id, numero_guia)
         except Exception as e:
             raise e

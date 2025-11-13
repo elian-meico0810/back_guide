@@ -1,4 +1,4 @@
-from django.db.models import Sum, Max, Q
+from django.db.models import Sum, Max, Q, F
 from django.db.models.functions import Lower
 from meicobaseapi.models import PlanillaDetalles, PlanillaDetalleFactura
 
@@ -145,14 +145,19 @@ class PlanillaDetallesRepository:
     def get_parametros_filtro(self, bodega_id):
         try:
             data = PlanillaDetalles.objects.filter(estado=True)
+
             if bodega_id:
-                data = data.filter(bodega_id=bodega_id) 
-            # Valores que queremos devolver
-            data = data.values(
-                estado_guia='estado_guia',
-                transportador='nombre_propietario_transportador'
+                data = data.filter(bodega_id=bodega_id)
+
+            # Creamos alias con annotate() usando F() y luego sacamos los valores
+            data = data.annotate(
+                estado_rename=F('estado_guia'),
+                transportador=F('nombre_propietario_transportador')
+            ).values(
+                'estado_guia',
+                'transportador'
             ).distinct()
-            
+
             return data
         except Exception as e:
             raise e

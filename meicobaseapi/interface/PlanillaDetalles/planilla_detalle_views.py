@@ -119,9 +119,10 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     def obtener_paramtetros_guia(self, request):
         try:
             search = request.query_params.get("search", None)
-
+            bodega_id = request.query_params.get("bodega_id", None)
+            
             # Obtenemos la lista procesada desde el servicio
-            data = self.service.get_filter()  
+            data = self.service.get_filter(bodega_id)  
 
             return APIResponse.successful(
                 message="Operación exitosa",
