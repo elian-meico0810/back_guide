@@ -6,12 +6,13 @@ from meicobaseapi.core.helpers.utils import model_to_dict
 
 class Auditoria(models.Model):
     """Class representing a person"""
-    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación")
-    updated_at = models.DateTimeField(auto_now=True, help_text="Fecha y hora de la última actualización")
-    created_by = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, related_name='created_%(class)s_set', help_text="Usuario que creó el registro")
-    updated_by = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, related_name='updated_%(class)s_set', help_text="Usuario que actualizó el registro")
-    deleted_at = models.DateTimeField(null=True, blank=True, help_text="Fecha y hora de eliminación")
-    deleted_by = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_%(class)s_set', help_text="Usuario que eliminó el registro")
+    id = models.BigAutoField(primary_key=True, help_text="Hace referencia al id auto-incremental.")
+    CreatedAt = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación")
+    UpdatedAt = models.DateTimeField(auto_now=True, help_text="Fecha y hora de la última actualización")
+    CreatedBy = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, related_name='created_%(class)s_set', help_text="Usuario que creó el registro")
+    UpdatedBy = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, related_name='updated_%(class)s_set', help_text="Usuario que actualizó el registro")
+    DeletedAt = models.DateTimeField(null=True, blank=True, help_text="Fecha y hora de eliminación")
+    DeletedBy = models.ForeignKey('Usuarios', on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_%(class)s_set', help_text="Usuario que eliminó el registro")
 
     class Meta:
         """Class representing a person"""
@@ -19,10 +20,10 @@ class Auditoria(models.Model):
 
 
 class Usuarios(Auditoria):
-    nombre = models.CharField(max_length=50, help_text="Nombre completo del usuario")
-    correo = models.CharField(max_length=50, help_text="Correo electrónico del usuario")
-    ciudad = models.CharField(max_length=50, null=True, blank=True, help_text="Ciudad del usuario")
-    estado = models.BooleanField(default=True, help_text="Estado del usuario (activo/inactivo)")
+    Nombre = models.CharField(max_length=50, help_text="Nombre completo del usuario")
+    Correo = models.CharField(max_length=50, help_text="Correo electrónico del usuario")
+    Ciudad = models.CharField(max_length=50, null=True, blank=True, help_text="Ciudad del usuario")
+    Estado = models.BooleanField(default=True, help_text="Estado del usuario (activo/inactivo)")
     
     class Meta:
         db_table = 'Usuarios'
@@ -30,9 +31,9 @@ class Usuarios(Auditoria):
         
         
 class Roles(Auditoria):
-    nombre = models.CharField(max_length=50, help_text="Nombre del rol")
-    descripcion = models.CharField(max_length=255, null=True, blank=True, help_text="Descripción del rol")
-    estado = models.BooleanField(default=True, help_text="Estado del rol (activo/inactivo)")
+    Nombre = models.CharField(max_length=50, help_text="Nombre del rol")
+    Descripcion = models.CharField(max_length=255, null=True, blank=True, help_text="Descripción del rol")
+    Estado = models.BooleanField(default=True, help_text="Estado del rol (activo/inactivo)")
     
     class Meta:
         db_table = 'Roles'
@@ -40,9 +41,9 @@ class Roles(Auditoria):
         
         
 class UsuarioRoles(Auditoria):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado al rol")
-    rol = models.ForeignKey(Roles, on_delete=models.CASCADE, help_text="Rol asociado al usuario")
-    estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
+    Usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado al rol")
+    Rol = models.ForeignKey(Roles, on_delete=models.CASCADE, help_text="Rol asociado al usuario")
+    Estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
     
     class Meta:
         db_table = 'UsuarioRoles'
@@ -50,9 +51,9 @@ class UsuarioRoles(Auditoria):
        
         
 class Permisos(Auditoria):
-    nombre = models.CharField(max_length=50, help_text="Nombre del permiso")
-    codigo = models.CharField(max_length=255, null=True, blank=True, help_text="Descripción del permiso")
-    estado = models.BooleanField(default=True, help_text="Estado del permiso (activo/inactivo)")
+    Nombre = models.CharField(max_length=50, help_text="Nombre del permiso")
+    Codigo = models.CharField(max_length=255, null=True, blank=True, help_text="Descripción del permiso")
+    Estado = models.BooleanField(default=True, help_text="Estado del permiso (activo/inactivo)")
     
     class Meta:
         db_table = 'Permisos'
@@ -60,9 +61,9 @@ class Permisos(Auditoria):
         
         
 class RolPermisos(Auditoria):
-    rol = models.ForeignKey(Roles, on_delete=models.CASCADE, help_text="Rol asociado al permiso")
-    permiso = models.ForeignKey(Permisos, on_delete=models.CASCADE, help_text="Permiso asociado al rol")
-    estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
+    Rol = models.ForeignKey(Roles, on_delete=models.CASCADE, help_text="Rol asociado al permiso")
+    Permiso = models.ForeignKey(Permisos, on_delete=models.CASCADE, help_text="Permiso asociado al rol")
+    Estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
     
     class Meta:
         db_table = 'RolPermisos'
@@ -70,9 +71,9 @@ class RolPermisos(Auditoria):
         
         
 class UsuarioPermisos(Auditoria):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado al permiso")
-    permiso = models.ForeignKey(Permisos, on_delete=models.CASCADE, help_text="Permiso asociado al usuario")
-    estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
+    Usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado al permiso")
+    Permiso = models.ForeignKey(Permisos, on_delete=models.CASCADE, help_text="Permiso asociado al usuario")
+    Estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
     
     class Meta:
         db_table = 'UsuarioPermisos'
@@ -80,10 +81,10 @@ class UsuarioPermisos(Auditoria):
        
        
 class Bodegas(Auditoria):
-    nombre = models.CharField(max_length=100, help_text="Nombre de la bodega")
-    ciudad = models.CharField(max_length=255, null=True, blank=True, help_text="Ubicación de la bodega")
-    descripcion = models.TextField(null=True, blank=True, help_text="Descripción de la bodega")
-    estado = models.BooleanField(default=True, help_text="Estado de la bodega (activo/inactivo)")
+    Nombre = models.CharField(max_length=100, help_text="Nombre de la bodega")
+    Ciudad = models.CharField(max_length=255, null=True, blank=True, help_text="Ubicación de la bodega")
+    Descripcion = models.TextField(null=True, blank=True, help_text="Descripción de la bodega")
+    Estado = models.BooleanField(default=True, help_text="Estado de la bodega (activo/inactivo)")
     
     class Meta:
         db_table = 'Bodegas'
@@ -91,9 +92,9 @@ class Bodegas(Auditoria):
 
 
 class UsuarioBodegas(Auditoria):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado a la bodega")
-    bodega = models.ForeignKey(Bodegas, on_delete=models.CASCADE, help_text="Bodega asociada al usuario")
-    estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
+    Usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, help_text="Usuario asociado a la bodega")
+    Bodega = models.ForeignKey(Bodegas, on_delete=models.CASCADE, help_text="Bodega asociada al usuario")
+    Estado = models.BooleanField(default=True, help_text="Estado de la asociación (activo/inactivo)")
     
     class Meta:
         db_table = 'UsuarioBodegas'
@@ -101,9 +102,9 @@ class UsuarioBodegas(Auditoria):
 
 
 class Parametros(Auditoria):
-    nombre = models.CharField(max_length=100, help_text="Clave del parámetro")
-    descripcion = models.TextField(null=True, blank=True, help_text="Descripción del parámetro")
-    estado = models.BooleanField(default=True, help_text="Estado del parámetro (activo/inactivo)")
+    Nombre = models.CharField(max_length=100, help_text="Clave del parámetro")
+    Descripcion = models.TextField(null=True, blank=True, help_text="Descripción del parámetro")
+    Estado = models.BooleanField(default=True, help_text="Estado del parámetro (activo/inactivo)")
     
     class Meta:
         db_table = 'Parametros'
@@ -111,10 +112,10 @@ class Parametros(Auditoria):
 
 
 class Atributos(Auditoria):
-    nombre = models.CharField(max_length=100, help_text="Nombre del atributo")
-    descripcion = models.TextField(null=True, blank=True, help_text="Descripción del atributo")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
-    parametro = models.ForeignKey(Parametros, on_delete=models.CASCADE, help_text="Parámetro asociado al atributo")
+    Nombre = models.CharField(max_length=100, help_text="Nombre del atributo")
+    Descripcion = models.TextField(null=True, blank=True, help_text="Descripción del atributo")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    Parametro = models.ForeignKey(Parametros, on_delete=models.CASCADE, help_text="Parámetro asociado al atributo")
     
     class Meta:
         db_table = 'Atributos'
@@ -122,113 +123,136 @@ class Atributos(Auditoria):
 
         
 class PlanillaEncabezado(Auditoria):
-    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    fecha_creacion_planilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
-    usuario_creacion_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
-    total_esperado_recaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
-    total_recaudado = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total recaudado")
-    total_diferencia = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total diferencia entre esperado y recaudado")
-    cantidad_guias_despachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
-    cantidad_guias_confirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    FechaCreacionPlanilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
+    UsuarioCreacionPlanilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
+    TotalEsperadoRecaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
+    TotalRecaudado = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total recaudado")
+    TotalDiferencia = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total diferencia entre esperado y recaudado")
+    CantidadGuiasDespachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
+    CantidadGuiasConfirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaEncabezado'
         default_permissions = ()
         
+# ====================== AUDITORIA INTERNA ======================================
+def planilla_encabezado_post_save(sender, instance, created, *args, **kwargs):
+        model_dict = model_to_dict(instance,
+        foreign_keys=[
+           
+        ])
+        model_dict.pop('model')
+        model_dict['PlanillaEncabezadoId'] = model_dict.pop('pk')
+        PlanillaEncabezadoAuditoria.objects.create(**model_dict)
+
+post_save.connect(planilla_encabezado_post_save,sender=PlanillaEncabezado)
         
 class PlanillaEncabezadoAuditoria(Auditoria):
-    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    fecha_creacion_planilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
-    usuario_creacion_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
-    total_esperado_recaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
-    total_recaudado = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total recaudado")
-    total_diferencia = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total diferencia entre esperado y recaudado")
-    cantidad_guias_despachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
-    cantidad_guias_confirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
-    planilla_encabezado=  models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla encabezado original")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    FechaCreacionPlanilla = models.DateTimeField(null=True, blank=True, help_text="Fecha de creación de la planilla")
+    UsuarioCreacionPlanilla = models.CharField(max_length=255, null=True, blank=True, help_text="Usuario que creó la planilla")
+    TotalEsperadoRecaudar = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total esperado a recaudar")
+    TotalRecaudado = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total recaudado")
+    TotalDiferencia = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Total diferencia entre esperado y recaudado")
+    CantidadGuiasDespachadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías despachadas")
+    CantidadGuiasConfirmadas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de guías confirmadas")
+    PlanillaEncabezadoId =  models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla encabezado original")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaEncabezadoAuditoria'
         default_permissions = ()
-        
+
         
 class PlanillaDetalles(Auditoria):
-    planilla_enc_id = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
-    fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    bodega_id = models.CharField(max_length=100, null=True, blank=True, help_text="Identificador de la bodega")
-    tipo_id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
-    id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
-    nombre_propietario_transportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
-    placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
-    tipo_id_conductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
-    conductor_id = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
-    nombre_conductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
-    estado_guia_original = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
-    estado_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
-    cantidad_facturas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de facturas asociadas")
-    fecha_promesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
-    fecha_retorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
-    valor_recaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor a recaudar")
-    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
-    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
-    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    usuario_id_confirmacion = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó la confirmación")
-    nombre_usuario_confirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó la confirmación")
-    correo_usuario_confirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó la confirmación")
-    fecha_ingreso_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de ingreso (yyyymmdd)")
-    fecha_ingreso_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de ingreso (datetime)")
-    fecha_confirmacion_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
-    fecha_confirmacion_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    FechaCreacionGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
+    FechaDespachoGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    BodegaId = models.CharField(max_length=100, null=True, blank=True, help_text="Identificador de la bodega")
+    TipoIdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
+    IdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
+    NombrePropietarioTransportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
+    Placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
+    TipoIdConductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
+    ConductorId = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
+    NombreConductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
+    EstadoGuiaOriginal = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
+    EstadoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
+    CantidadFacturas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de facturas asociadas")
+    FechaPromesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
+    FechaRetorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
+    ValorRecaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor a recaudar")
+    UsuarioIdIngreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    NombreUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    CorreoUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
+    UsuarioIdConfirmacion = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó la confirmación")
+    NombreUsuarioConfirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó la confirmación")
+    CorreoUsuarioConfirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó la confirmación")
+    FechaIngresoCorta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de ingreso (yyyymmdd)")
+    FechaIngresoFull = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de ingreso (datetime)")
+    FechaConfirmacionCorta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
+    FechaConfirmacionFull = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaDetalles'
         default_permissions = ()
 
+# ====================== AUDITORIA INTERNA ======================================
+def planilla_detalle_post_save(sender, instance, created, *args, **kwargs):
+        model_dict = model_to_dict(instance,
+        foreign_keys=[
+           
+        ])
+        model_dict.pop('model')
+        model_dict['PlanillaDetalleId'] = model_dict.pop('pk')
+        PlanillaDetallesAuditoria.objects.create(**model_dict)
+
+post_save.connect(planilla_detalle_post_save,sender=PlanillaDetalles)
+
 
 class PlanillaDetallesAuditoria(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
-    fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    bodega_id = models.CharField(max_length=100, null=True, blank=True, help_text="Identificador de la bodega")
-    tipo_id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
-    id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
-    nombre_propietario_transportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
-    placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
-    tipo_id_conductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
-    conductor_id = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
-    nombre_conductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
-    estado_guia_original = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
-    estado_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
-    cantidad_facturas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de facturas asociadas")
-    fecha_promesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
-    fecha_retorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
-    valor_recaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor a recaudar")
-    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
-    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
-    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    usuario_id_confirmacion = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó la confirmación")
-    nombre_usuario_confirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó la confirmación")
-    correo_usuario_confirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó la confirmación")
-    fecha_ingreso_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de ingreso (yyyymmdd)")
-    fecha_ingreso_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de ingreso (datetime)")
-    fecha_confirmacion_corta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
-    fecha_confirmacion_full = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
-    planilla_detalle = models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla detalles original")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField( null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    FechaCreacionGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
+    FechaDespachoGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    BodegaId = models.CharField(max_length=100, null=True, blank=True, help_text="Identificador de la bodega")
+    TipoIdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
+    IdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
+    NombrePropietarioTransportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
+    Placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
+    TipoIdConductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
+    ConductorId = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
+    NombreConductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
+    EstadoGuiaOriginal = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
+    EstadoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
+    CantidadFacturas = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="Cantidad de facturas asociadas")
+    FechaPromesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
+    FechaRetorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
+    ValorRecaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor a recaudar")
+    UsuarioIdIngreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    NombreUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    CorreoUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
+    UsuarioIdConfirmacion = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó la confirmación")
+    NombreUsuarioConfirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó la confirmación")
+    CorreoUsuarioConfirmacion = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó la confirmación")
+    FechaIngresoCorta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de ingreso (yyyymmdd)")
+    FechaIngresoFull = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de ingreso (datetime)")
+    FechaConfirmacionCorta = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha de confirmación (yyyymmdd)")
+    FechaConfirmacionFull = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha completa de confirmación (datetime)")
+    PlanillaDetalleId = models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla detalles original")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
  
     class Meta:
         db_table = 'PlanillaDetalleAuditoria'
@@ -236,89 +260,102 @@ class PlanillaDetallesAuditoria(Auditoria):
         
         
 class PlanillaDetalleFactura(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    bodega_id = models.CharField(max_length=50, null=True, blank=True, help_text="Hace referencia al id de las bodegas.")
-    fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
-    fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    tipo_id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
-    id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
-    nombre_propietario_transportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
-    placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
-    tipo_id_conductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
-    conductor_id = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
-    nombre_conductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
-    estado_guia_original = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
-    estado_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
-    fecha_promesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
-    fecha_retorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
-    tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
-    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
-    razon_social_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
-    valor_devolucion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la devolución")
-    valor_factura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la factura")
-    dfr_factura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
-    numeros_nc  = models.CharField(max_length=2000, null=True, blank=True, help_text="Numero de nota cerdito")
-    valor_nc = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
-    dfr_real = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
-    valor_esperado_recaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
-    valor_recaudado = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
-    diferencia = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
-    estado_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
-    codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
-    nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
-    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
-    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
-    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    BodegaId = models.CharField(max_length=50, null=True, blank=True, help_text="Hace referencia al id de las bodegas.")
+    FechaCreacionGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
+    FechaDespachoGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    TipoIdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
+    IdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
+    NombrePropietarioTransportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
+    Placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
+    TipoIdConductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
+    ConductorId = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
+    NombreConductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
+    EstadoGuiaOriginal = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
+    EstadoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
+    FechaPromesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
+    FechaRetorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
+    TipoDocumento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
+    CodigoCliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    RazonSocialCliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
+    ValorDevolucion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la devolución")
+    ValorFactura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la factura")
+    DfrFactura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
+    NumerosNc  = models.CharField(max_length=2000, null=True, blank=True, help_text="Numero de nota cerdito")
+    ValorNc = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
+    DfrReal = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
+    ValorEsperadoRecaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
+    ValorRecaudado = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
+    Diferencia = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
+    EstadoPlanilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    CodigoCondicionPago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
+    NombreCondicionPago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
+    UsuarioIdIngreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    NombreUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    CorreoUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'PlanillaDetalleFactura'
         default_permissions = ()
         
+# ====================== AUDITORIA INTERNA ======================================
+def planilla_detalle_facturas_post_save(sender, instance, created, *args, **kwargs):
+        model_dict = model_to_dict(instance,
+        foreign_keys=[
+           
+        ])
+        model_dict.pop('model')
+        model_dict['PlanillaDetalleId'] = model_dict.pop('pk')
+        PlanillaDetalleFacturaAuditoria.objects.create(**model_dict)
+
+post_save.connect(planilla_detalle_facturas_post_save,sender=PlanillaDetalleFactura)
+
         
 class PlanillaDetalleFacturaAuditoria(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    bodega_id = models.CharField(max_length=50, null=True, blank=True, help_text="Hace referencia al id de las bodegas.")
-    fecha_creacion_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
-    fecha_despacho_guia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
-    tipo_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
-    tipo_id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
-    id_propietario_transportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
-    nombre_propietario_transportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
-    placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
-    tipo_id_conductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
-    conductor_id = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
-    nombre_conductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
-    estado_guia_original = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
-    estado_guia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
-    fecha_promesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
-    fecha_retorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
-    tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
-    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
-    razon_social_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
-    valor_devolucion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la devolución")
-    dfr_factura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
-    numeros_nc  = models.CharField(max_length=255, null=True, blank=True, help_text="Numero de nota cerdito")
-    valor_nc = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
-    dfr_real = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
-    valor_esperado_recaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
-    valor_recaudado = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
-    diferencia = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
-    estado_planilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
-    codigo_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
-    nombre_condicion_pago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
-    usuario_id_ingreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
-    nombre_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
-    correo_usuario_ingreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
-    planilla_detalle =models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla detalles facuras original")
+    PlanillaEncId = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    BodegaId = models.CharField(max_length=50, null=True, blank=True, help_text="Hace referencia al id de las bodegas.")
+    FechaCreacionGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de creación de la guía")
+    FechaDespachoGuia = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de despacho de la guía")
+    TipoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de guía (MIXTA, TAT, MAYORISTA)")
+    TipoIdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de ID del propietario o transportador (Cédula o NIT)")
+    IdPropietarioTransportador = models.CharField(max_length=100, null=True, blank=True, help_text="ID del propietario o transportador")
+    NombrePropietarioTransportador = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del propietario o transportador")
+    Placa = models.CharField(max_length=50, null=True, blank=True, help_text="Placa del vehículo")
+    TipoIdConductor = models.CharField(max_length=100, null=True, blank=True, help_text="Tipo de identificación del conductor (Cédula o NIT)")
+    ConductorId = models.CharField(max_length=100, null=True, blank=True, help_text="ID del conductor")
+    NombreConductor = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del conductor")
+    EstadoGuiaOriginal = models.CharField(max_length=100, null=True, blank=True, help_text="Estado original de la guía (CERRADA/IMPRESA)")
+    EstadoGuia = models.CharField(max_length=100, null=True, blank=True, help_text="Estado actual de la guía (DESPACHADA/CONFIRMADA)")
+    FechaPromesa = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de promesa")
+    FechaRetorno = models.CharField(max_length=255, null=True, blank=True, help_text="Fecha de retorno")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Número de documento (factura)")
+    TipoDocumento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista)")
+    CodigoCliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    RazonSocialCliente = models.CharField(max_length=255, null=True, blank=True, help_text="Razon socail del cliente ")
+    ValorDevolucion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la devolución")
+    ValorFactura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la factura")
+    DfrFactura = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia de facturas")
+    NumerosNc  = models.CharField(max_length=2000, null=True, blank=True, help_text="Numero de nota cerdito")
+    ValorNc = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de nota credito")
+    DfrReal = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia real")
+    ValorEsperadoRecaudar = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor esperado a recaudar")
+    ValorRecaudado = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor efectivamente recaudado")
+    Diferencia = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Diferencia entre lo esperado y lo recaudado")
+    EstadoPlanilla = models.CharField(max_length=255, null=True, blank=True, help_text="Estado del usuario (activo/inactivo)")
+    CodigoCondicionPago = models.CharField(max_length=255, null=True, blank=True, help_text="codigo condicion pago")
+    NombreCondicionPago = models.CharField(max_length=255, null=True, blank=True, help_text="nombre condicion pago")
+    UsuarioIdIngreso = models.CharField(max_length=100, null=True, blank=True, help_text="ID del usuario que realizó el ingreso")
+    NombreUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del usuario que realizó el ingreso")
+    CorreoUsuarioIngreso = models.CharField(max_length=255, null=True, blank=True, help_text="Correo del usuario que realizó el ingreso")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaDetalleId =models.IntegerField(null=True, blank=True, help_text="Referencia a la planilla detalles facuras original")
 
     class Meta:
         db_table = 'PlanillaDetalleFacturaAuditoria'
@@ -326,44 +363,56 @@ class PlanillaDetalleFacturaAuditoria(Auditoria):
         
 
 class Documentos(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
-    tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
-    valor_documento = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
-    fecha_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha del documento")
-    aplica_a = models.CharField(max_length=50, null=True, blank=True, help_text="Documento al que aplica (si es nota crédito)")
-    bodega_id = models.CharField(max_length=50, null=True, blank=True, help_text="Identificador de la bodega")
-    nombre_bodega = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre de la bodega")
-    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
-    nombre_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
-    condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
-    nombre_condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Nombre de condición de pago del documento")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    NumeroDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
+    TipoDocumento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
+    ValorDocumento = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
+    FechaDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha del documento")
+    AplicaA = models.CharField(max_length=50, null=True, blank=True, help_text="Documento al que aplica (si es nota crédito)")
+    BodegaId = models.CharField(max_length=50, null=True, blank=True, help_text="Identificador de la bodega")
+    NombreBodega = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre de la bodega")
+    CodigoCliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    NombreCliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
+    CondicionPago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
+    NombreCondicionPago = models.CharField(max_length=100, null=True, blank=True, help_text="Nombre de condición de pago del documento")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
 
     class Meta:
         db_table = 'Documentos'
         default_permissions = ()
         
+# ====================== AUDITORIA INTERNA ======================================
+def documentos_post_save(sender, instance, created, *args, **kwargs):
+        model_dict = model_to_dict(instance,
+        foreign_keys=[
+           
+        ])
+        model_dict.pop('model')
+        model_dict['DocumentoId'] = model_dict.pop('pk')
+        DocumentosAuditoria.objects.create(**model_dict)
+
+post_save.connect(documentos_post_save,sender=Documentos)
+
         
 class DocumentosAuditoria(Auditoria):
-    planilla_enc_id = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
-    id_go_any_where = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    numero_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
-    tipo_documento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
-    valor_documento = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
-    fecha_documento = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha del documento")
-    aplica_a = models.CharField(max_length=50, null=True, blank=True, help_text="Documento al que aplica (si es nota crédito)")
-    bodega_id = models.CharField(max_length=50, null=True, blank=True, help_text="Identificador de la bodega")
-    nombre_bodega = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre de la bodega")
-    codigo_cliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
-    nombre_cliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
-    condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
-    nombre_condicion_pago = models.CharField(max_length=100, null=True, blank=True, help_text="Nombre de condición de pago del documento")
-    documento = models.IntegerField(null=True, blank=True, help_text="Referencia al documento original")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    PlanillaEncId = models.IntegerField(null=True, blank=True, help_text="ID del encabezado de la planilla")
+    IdGoAnyWhere = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referncia al id de GoAnyWhere")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    NumeroDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Número del documento")
+    TipoDocumento = models.CharField(max_length=255, null=True, blank=True, help_text="Tipo de documento (I: Factura_TAT, O: Factura_Mayorista, C: Nota_Credito)")
+    ValorDocumento = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor total del documento")
+    FechaDocumento = models.CharField(max_length=50, null=True, blank=True, help_text="Fecha del documento")
+    AplicaA = models.CharField(max_length=50, null=True, blank=True, help_text="Documento al que aplica (si es nota crédito)")
+    BodegaId = models.CharField(max_length=50, null=True, blank=True, help_text="Identificador de la bodega")
+    NombreBodega = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre de la bodega")
+    CodigoCliente = models.CharField(max_length=50, null=True, blank=True, help_text="Código del cliente asociado")
+    NombreCliente = models.CharField(max_length=255, null=True, blank=True, help_text="Nombre del cliente asociado")
+    CondicionPago = models.CharField(max_length=100, null=True, blank=True, help_text="Condición de pago del documento")
+    NombreCondicionPago = models.CharField(max_length=100, null=True, blank=True, help_text="Nombre de condición de pago del documento")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    DocumentoId = models.IntegerField(null=True, blank=True, help_text="Referencia al documento original")
     
     class Meta:
         db_table = 'DocumentosAuditoria'
@@ -371,20 +420,20 @@ class DocumentosAuditoria(Auditoria):
         
         
 class Consignaciones(Auditoria):
-    numero_planilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
-    tipo_consignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    numero_documento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
-    numero_consignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
-    numero_consignacion_banco  = models.CharField(max_length=255, null=True, blank=True, help_text="Número de consignacion banco")
-    fecha_registro_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de registro yyyymmdd")
-    fecha_consignacion_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de consignacion yyyymmdd")
-    fecha_registro_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
-    fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
-    valor_consignacion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
-    ruta_archivo_soporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
-    nombre_archivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    NumeroPlanilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
+    TipoConsignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    NumeroDocumento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
+    NumeroConsignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
+    NumeroConsignacionBanco  = models.CharField(max_length=255, null=True, blank=True, help_text="Número de consignacion banco")
+    FechaRegistroCorta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de registro yyyymmdd")
+    FechaConsignacionCorta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de consignacion yyyymmdd")
+    FechaRegistroFull = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
+    FechaConsignacionFull = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
+    ValorConsignacion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
+    RutaArchivoSoporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
+    NombreArchivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
     
     class Meta:
         db_table = 'Consignaciones'
@@ -398,28 +447,28 @@ def consignaciones_post_save(sender, instance, created, *args, **kwargs):
            
         ])
         model_dict.pop('model')
-        model_dict['consignacion_id'] = model_dict.pop('pk')
+        model_dict['ConsignacionId'] = model_dict.pop('pk')
         ConsignacionesAuditoria.objects.create(**model_dict)
 
 post_save.connect(consignaciones_post_save,sender=Consignaciones)
         
         
 class ConsignacionesAuditoria(Auditoria):
-    numero_planilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
-    tipo_consignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
-    numero_guia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
-    numero_documento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
-    numero_consignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
-    nombre_archivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
-    numero_consignacion_banco  = models.CharField(max_length=255, null=True, blank=True, help_text="Número de consignacion banco")
-    fecha_registro_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de registro yyyymmdd")
-    fecha_consignacion_corta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de consignacion yyyymmdd")
-    fecha_registro_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
-    fecha_consignacion_full = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
-    valor_consignacion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
-    ruta_archivo_soporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
-    consignacion_id = models.IntegerField(null=True, blank=True, help_text="ID de la auditoria de la consignacion")
-    estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    NumeroPlanilla = models.IntegerField(null=True, blank=True, help_text="ID de la planilla")
+    TipoConsignacion = models.CharField(max_length=255, null=True, blank=True,help_text="Tipo de consignacion.")
+    NumeroGuia = models.CharField(max_length=255, null=True, blank=True,help_text="Número de la guía asociada a la planilla")
+    NumeroDocumento = models.CharField(max_length=255, null=True, blank=True,help_text="Número de documento o factura")
+    NumeroConsignacion  = models.IntegerField(null=True, blank=True, help_text="Número de consignacion (Id auto-incremental)")
+    NumeroConsignacionBanco  = models.CharField(max_length=255, null=True, blank=True, help_text="Número de consignacion banco")
+    FechaRegistroCorta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de registro yyyymmdd")
+    FechaConsignacionCorta = models.CharField(max_length=100, null=True, blank=True, help_text="Fecha de consignacion yyyymmdd")
+    FechaRegistroFull = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
+    FechaConsignacionFull = models.DateTimeField(auto_now_add=True, help_text="Fecha y hora de creación yyyymmdd hh:mm:ss")
+    ValorConsignacion = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, help_text="Valor de la consignacion")
+    RutaArchivoSoporte = models.TextField(null=True, blank=True, help_text="Contenido del archivo en Base64 o URL de Azure")
+    NombreArchivo = models.CharField(max_length=255, null=True, blank=True,help_text="Nombre del archivo")
+    Estado = models.BooleanField(default=True, help_text="Estado del atributo (activo/inactivo)")
+    ConsignacionId = models.IntegerField(null=True, blank=True, help_text="ID de la auditoria de la consignacion")
 
     class Meta:
         db_table = 'ConsignacionessAuditoria'

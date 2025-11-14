@@ -43,10 +43,10 @@ class ConsignacionesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             search = request.query_params.get("search", None)
 
             if search:
-                data = data.filter(Q(fecha_consignacion_corta__icontains=search) |
-                                Q(tipo_consignacion__icontains=search) |  
-                                Q(valor_consignacion__icontains=search) | 
-                                Q(nombre_archivo__icontains=search) )
+                data = data.filter(Q(FechaConsignacionCorta__icontains=search) |
+                                Q(TipoConsignacion__icontains=search) |  
+                                Q(ValorConsignacion__icontains=search) | 
+                                Q(NombreArchivo__icontains=search) )
             #============================================================
                 
             if page is not None:

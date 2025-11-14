@@ -7,7 +7,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
         model = Consignaciones
         fields = '__all__'
         extra_kwargs = {
-            'tipo_consignacion': {
+            'TipoConsignacion': {
                 'required': True,
                 'allow_blank': False,
                 'allow_null': False,
@@ -17,7 +17,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                     'null': 'El tipo de consignación es requerido.',
                 }
             },
-            'numero_guia': {
+            'NumeroGuia': {
                 'required': True,
                 'allow_blank': False,
                 'allow_null': False,
@@ -27,7 +27,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                     'null': 'El número de guía es requerido.',
                 }
             },
-            'ruta_archivo_soporte': {
+            'RutaArchivoSoporte': {
                 'required': True,
                 'allow_blank': False,
                 'allow_null': False,
@@ -37,7 +37,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                     'null': 'La ruta del archivo de soporte es requerido.',
                 }
             },
-            'valor_consignacion': {
+            'ValorConsignacion': {
                 'required': True,
                 'allow_null': False,
                 'error_messages': {
@@ -46,7 +46,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                     'null': 'El valor de la consignación es requerido.',
                 }
             },
-            'numero_planilla': {
+            'NumeroPlanilla': {
                 'required': True,
                 'error_messages': {
                     'required': 'El número de planilla es requerido.',
@@ -54,7 +54,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
                     'null': 'El número de planilla es requerido',
                 }
             },
-            'nombre_archivo': {
+            'NombreArchivo': {
                 'required': True,
                 'allow_null': False,
                 'error_messages': {
@@ -68,7 +68,7 @@ class ConsignacionesSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            valor_consignacion = data.get('valor_consignacion',0)
+            valor_consignacion = data.get('ValorConsignacion',0)
             if not valor_consignacion or valor_consignacion <= 0:
                 raise Exception("El valor de la consignación de ser mayor a 0.")
             return data

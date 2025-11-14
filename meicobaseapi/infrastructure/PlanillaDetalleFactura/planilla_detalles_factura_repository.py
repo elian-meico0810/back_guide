@@ -7,7 +7,7 @@ class PlanillaDetalleFacturaRepository:
     
     def get_all(self):
         try:
-            data = PlanillaDetalleFactura.objects.filter(estado=True).order_by('-id')
+            data = PlanillaDetalleFactura.objects.filter(Estado=True).order_by('-id')
             return data
         except Exception as e:
             raise e

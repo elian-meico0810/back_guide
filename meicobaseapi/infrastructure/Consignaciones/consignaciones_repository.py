@@ -9,7 +9,7 @@ class ConsignacionesRepository:
     
     def get_all(self):
         try:
-            data = Consignaciones.objects.filter(estado=True).order_by('-id')
+            data = Consignaciones.objects.filter(Estado=True).order_by('-id')
             return data
         except Exception as e:
             raise e
@@ -19,10 +19,10 @@ class ConsignacionesRepository:
         try:
             consignacion = Consignaciones.objects.create(**data) 
             # Extraer variables
-            file_data = data.get('ruta_archivo_soporte')
-            numero_guia = data.get('numero_guia')
-            numero_planilla = data.get('numero_planilla')
-            nombre_archivo = data.get('nombre_archivo')
+            file_data = data.get('RutaArchivoSoporte')
+            numero_guia = data.get('NumeroGuia')
+            numero_planilla = data.get('NumeroPlanilla')
+            nombre_archivo = data.get('NombreArchivo')
             date = datetime.now().strftime("%Y%m%d")
             date_time = datetime.now().strftime("%Y-%m-%d")
 
@@ -32,10 +32,10 @@ class ConsignacionesRepository:
                 # Generar el nombre del archivo usando tus variables
                 nombre_archivo = f"{date}_{numero_planilla}_{numero_guia}_{numero_consignacion}_{nombre_archivo}_{uuid.uuid4()}"
                 upload_result = upload_to_azure(file_data, blob_name=nombre_archivo, subfolder="Consignaciones")
-                consignacion.ruta_archivo_soporte = upload_result['file_name']
-            
-            consignacion.fecha_registro_corta = date_time
-            consignacion.fecha_consignacion_corta = date_time
+                consignacion.RutaArchivoSoporte = upload_result['file_name']
+      
+            consignacion.FechaRegistroCorta = date_time
+            consignacion.FechaConsignacionCorta = date_time
             consignacion.save()  
 
             return consignacion
@@ -49,11 +49,11 @@ class ConsignacionesRepository:
             los filtros del modulo de consignaciones 
         """
         try:
-            data = Consignaciones.objects.filter(estado=True).values(
-                'fecha_consignacion_corta',
-                'valor_consignacion',
-                'tipo_consignacion',
-                'nombre_archivo'
+            data = Consignaciones.objects.filter(Estado=True).values(
+                'FechaConsignacionCorta',
+                'ValorConsignacion',
+                'TipoConsignacion',
+                'NombreArchivo'
             ).distinct()
 
             return data           
@@ -68,8 +68,9 @@ class ConsignacionesRepository:
                 raise Exception("El registro no existe.")
             
             # Registrar información de eliminación
+            
             # consignacion.deleted_by = user
-            consignacion.deleted_at = timezone.now()
+            consignacion.DeletedAt = timezone.now()
             consignacion.save()
     
             # Eliminar el registro (opcional, si deseas borrado físico)
