@@ -188,7 +188,7 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
             
             return APIResponse.successful(
                 message="Operación exitosa",
-                data=list(service_ws.values())
+                data=[]
             ) 
         except Exception as e:
             raise e

@@ -23,14 +23,6 @@ class PlanillaWsSerializer(serializers.Serializer):
         },
         validators=[]
     )
-    gaw_id = serializers.IntegerField(
-        required=True,
-        error_messages={
-            'required': 'El campo gaw_id es obligatorio.',
-            'invalid': 'El id del gaw no es válido (debe ser un número entero).'
-        },
-        validators=[]
-    )
     fecha = serializers.RegexField(
         regex=r'^\d{4}-\d{2}-\d{2}$',
         required=True,

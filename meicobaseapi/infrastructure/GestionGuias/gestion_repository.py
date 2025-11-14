@@ -9,13 +9,15 @@ class GestionRepository:
     
     
     def ws_planilla_detalle(self, request):
+        """
+            - Funcion que orquesta la conexion, paramtros 
+            y repsuesta con Gaw para realizar el mapeo de campos 
+        """
         try:
-            print("request: ", request)
 
             payload = {
                 "Pe_vcFecha": request.get('fecha'),
-                "pe_vcBodega": request.get('bodega_id'),
-                #"pe_vcIdGaw": "1000"
+                "pe_vcBodega": request.get('bodega_id')
             }
             
             new_url = GoAnyWhere.request_with_basic_auth(GawEnums.GET_INFO_GUIAS.value, CredencialesGaw.USER_GAW.value, CredencialesGaw.PASSWORD_GAW.value, method="GET")
@@ -23,16 +25,20 @@ class GestionRepository:
                 data = GoAnyWhere.request_with_basic_auth(str(new_url), CredencialesGaw.USER_GAW.value, CredencialesGaw.PASSWORD_GAW.value, method="POST", validate=True, data=payload)
                 detalle = json.loads(data)       
                 message_json = detalle["data"]["message"]
+                
                 parsed = json.loads(message_json)
                 # Mapeo de estructuras
                 facturas = parsed["PlanillaDetalleFacturas"]
    
                 detalles = parsed["PlanillaDetalles"]
                 documentos = parsed["Documentos"]
+                
                 if documentos not in (None, "", [], {}, 0):
                     self.procesar_documentos(documentos)
+                    
                 if detalles not in (None, "", [], {}, 0):
                     self.procesar_detalles(detalles)
+                    
                 if facturas not in (None, "", [], {}, 0):
                     self.procesar_detalles_facturas(facturas)
                     
@@ -89,9 +95,9 @@ class GestionRepository:
             segun se haga el consumo a GoAnyWhere
         """
         try:
-            detalles = json_data.get("PlanillaDetalles", [])
             print("Esta en la funcion procesar_detalles *_*")
             print("======================================")  
+            detalles = json_data.get("PlanillaDetalles", [])
                
             planilla_detalles_objs = []
             
@@ -135,9 +141,9 @@ class GestionRepository:
         """
         try:
             
-            detalles = json_data.get("PlanillaDetalleFactura", [])
             print("Esta en la funcion procesar_detalles_facturas *_*")
             print("======================================")  
+            detalles = json_data.get("PlanillaDetalleFactura", [])
             
             planilla_factura_objs = []
     
@@ -174,7 +180,9 @@ class GestionRepository:
                         dfr_real=item.get("DfrReal"),
                         valor_esperado_recaudar=item.get("ValorEsperadoRecaudar"),
                         valor_recaudado=item.get("ValorRecaudado"),
-                        diferencia=Decimal(item.get("ValorEsperadoRecaudar")) - Decimal(item.get("ValorRecaudado"))
+                        diferencia=Decimal(item.get("ValorEsperadoRecaudar")) - Decimal(item.get("ValorRecaudado")),
+                        codigo_condicion_pago=item.get("CodigoCondicionPago"),
+                        nombre_condicion_pago=item.get("NombreCondicionPago"),
                     )
                 )
     
