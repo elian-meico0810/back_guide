@@ -1,13 +1,15 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes
+from meicobaseapi.core.helpers.utils import formatErrors
 from meicobaseapi.core.jwt_auth import JWTAuthentication
 from meicobaseapi.core.pagination.custom_pagination import PaginationHandlerMixin, ResultsSetPagination
 from meicobaseapi.core.APIResponse import APIResponse
 from meicobaseapi.core.authentication import AllowAnonymous
+from meicobaseapi.domain.GestionGuias.guias_services import GestionRepositoryService
 from meicobaseapi.domain.PlanillaDetalles.planilla_detalle_services import PlanillaDetallesService
 from rest_framework.decorators import action, permission_classes
-from meicobaseapi.interface.PlanillaDetalles.planilla_detalle_serializers import PlanillaDetallesListSerializer, PlanillaDetallesSerializer
+from meicobaseapi.interface.PlanillaDetalles.planilla_detalle_serializers import PlanillaDetallesListSerializer, PlanillaDetallesSerializer, PlanillaWsSerializer
  
 class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
     service =  PlanillaDetallesService()
@@ -171,3 +173,22 @@ class PlanillaDetallesViewSet(viewsets.ViewSet, PaginationHandlerMixin):
 
         except Exception as e:
             return APIResponse.failed(e)
+        
+        
+    @swagger_auto_schema(tags=["PlanillaDetalle"])
+    @action(detail=False, methods=["POST"], url_path="obtener-datos-numero-guia", name="Obtener informacion de guia por numero guia")
+    @permission_classes([AllowAnonymous])        
+    def obtener_datos_numero_guia(self,request):
+        try:
+            serializer = PlanillaWsSerializer(data=request.data)
+            if serializer.is_valid():
+                service_ws = GestionRepositoryService().ws_db_erp(request.data)
+            else:
+                return APIResponse.failed(error=formatErrors(serializer.errors))
+            
+            return APIResponse.successful(
+                message="Operación exitosa",
+                data=list(service_ws.values())
+            ) 
+        except Exception as e:
+            raise e

@@ -57,7 +57,7 @@ class crear_tablas_gestion_guias:
                     RazonSocialCliente VARCHAR(255) NULL,     
                     ValorFactura DECIMAL(18,4) NULL,
                     DfrFactura DECIMAL(18,4) NULL,
-                    NumerosNc VARCHAR(50) NULL,
+                    NumerosNc VARCHAR(2000) NULL,
                     ValorNc DECIMAL(18,4) NULL,
                     DfrReal DECIMAL(18,4) NULL,
                     ValorEsperadoRecaudar DECIMAL(18,4) NULL,

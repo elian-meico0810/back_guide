@@ -18,7 +18,6 @@ class GoAnyWhere():
             :return: Response como texto
         """
         try:
-            print(url)
             response = requests.request(
                 method=method.upper(),
                 url=url,
@@ -32,13 +31,16 @@ class GoAnyWhere():
             value= None
             # Acceder a los campos
             if not validate:
+                
                 payload_id = response_dict['data']['payloadId']
                 value = response_dict['data']['submitFormLink']  
-
+                
                 if not value or not response_dict['data']:
                     raise Exception("Hubo un error en el Endpoint de GoAnyWhere")
             else:
+                
                 value = response.text
+                
             return value
         except Exception as e:
             raise e
