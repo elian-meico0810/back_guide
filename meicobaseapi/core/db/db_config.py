@@ -15,7 +15,7 @@ def get_db_connection(db_name=None):
         password = os.getenv("DBPASSWORD")
 
         if not all([server, database, username, password]):
-            raise ValueError("❌ Faltan variables de entorno para la conexión a la base de datos.")
+            raise ValueError(" Faltan variables de entorno para la conexión a la base de datos.")
 
         conn = pyodbc.connect(
             f"DRIVER={{ODBC Driver 17 for SQL Server}};"

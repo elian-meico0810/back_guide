@@ -473,3 +473,18 @@ class ConsignacionesAuditoria(Auditoria):
     class Meta:
         db_table = 'ConsignacionessAuditoria'
         default_permissions = ()
+        
+        
+class ErrorLogs(Auditoria):
+    Consecutivo = models.IntegerField(null=True, blank=True, help_text="Hace refenrica al consecutivo.")
+    Funcion = models.CharField(max_length=255, null=True, blank=True, help_text="Hace referencia alnombre la funcion")
+    RequestData = models.JSONField(help_text="Hace referencia a la data enviada.", null=True)
+    ResponseData = models.JSONField(help_text="Hace referencia a la data de respuesta.", null=True)
+    ErrorTipo = models.CharField(max_length=255, null=True, blank=True)
+    Mensaje = models.TextField(help_text="Hace referencia al mensjae de error", null=True, blank=True)
+    Stacktrace = models.TextField()
+    Fecha = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'ErrorLogs'
+        default_permissions = ()
